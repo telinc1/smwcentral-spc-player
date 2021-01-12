@@ -1,0 +1,3 @@
+[submodule "src/snes_spc_js"]
+	path = src/snes_spc_js
+	url = https://github.com/cosinusoidally/snes_spc_js/
