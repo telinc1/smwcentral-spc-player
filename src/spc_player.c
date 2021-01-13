@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "snes_spc_js/snes_spc/spc.h"
+#include "snes_spc/spc.h"
 
 /* If str is not NULL, prints it and exits program, otherwise returns. */
 void error(const char* str);
