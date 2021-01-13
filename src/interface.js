@@ -84,7 +84,7 @@ function createSPCPlayerUI(){
 		volumeLabel.innerText = `${Math.round(volume * 100)}%`;
 	};
 	
-	const loadSong = (song = currentSong, time = 0) => {
+	const loadSong = (song, time = 0) => {
 		if(SPCPlayer.status < 0)
 		{
 			SMWCentral.SPCPlayer.onError("Couldn't load SPC player.");
@@ -338,7 +338,7 @@ function createSPCPlayerUI(){
 			if(!document.body.classList.contains("fetching-song"))
 			{
 				document.body.classList.add("fetching-song");
-				loadSong();
+				loadSong(currentSong);
 			}
 		}
 		else
@@ -359,12 +359,12 @@ function createSPCPlayerUI(){
 		}
 		
 		document.body.classList.add("fetching-song");
-		loadSong();
+		loadSong(currentSong);
 		
 		SMWCentral.SPCPlayer.onRestart();
 	});
 	
-	player.querySelector(".stop").addEventListener("click", (event) => {
+	player.querySelector(".stop").addEventListener("click", () => {
 		if(document.body.classList.contains("fetching-song"))
 		{
 			return;
