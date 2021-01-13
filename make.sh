@@ -32,4 +32,5 @@ fi
 && mkdir -p dist \
 && emcc $EMCC_FLAGS --pre-js pre/spc_player.js --pre-js pre/interface.js \
 	-s NO_EXIT_RUNTIME -s ENVIRONMENT=web -s "EXPORTED_FUNCTIONS=['_main', '_malloc', '_free', '_loadSPC', '_playSPC']" \
-	-I.. src/spc_player.c src/snes_spc/*cpp -o dist/spc.js
+	-I.. src/spc_player.c src/snes_spc/*cpp -o dist/spc.js \
+&& cp src/spc_player.html dist
