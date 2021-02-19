@@ -22,6 +22,8 @@ SMWCentral.SPCPlayer.onPause ??= () => {};
 SMWCentral.SPCPlayer.onRestart ??= () => {};
 SMWCentral.SPCPlayer.onStop ??= () => {};
 
+SMWCentral.SPCPlayer.onEnd ??= () => {};
+
 SMWCentral.SPCPlayer.onError ??= (error) => window.alert(error);
 
 SMWCentral.SPCPlayer.createPlaylistItem ??= (song, filename, index) => {
@@ -244,6 +246,8 @@ function createSPCPlayerUI(){
 			play.classList.remove("hidden");
 			
 			SPCPlayer.stopSPC();
+			
+			SMWCentral.SPCPlayer.onEnd();
 			
 			return;
 		}

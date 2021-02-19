@@ -72,6 +72,8 @@ When a button in the interface is clicked, the following functions are called:
 - `SMWCentral.SPCPlayer.onRestart`
 - `SMWCentral.SPCPlayer.onStop`
 
+If the user turns off looping, `SMWCentral.SPCPlayer.onEnd` is called when the SPC ends.
+
 ### Custom interface
 
 You can use any HTML and CSS for the SPC player. Check `src/interface.js` for a list of elements that must exist.
