@@ -59,7 +59,7 @@ function createSPCPlayerUI(){
 	let currentSong = null;
 	
 	let finished = false;
-	let timer = {lastTime: -1, target: 0, finish: 0, fade: 0, element: null};
+	let timer = {lastUpdatedUI: -1, target: 0, finish: 0, fade: 0, element: null};
 	
 	if(Number.isNaN(volume))
 	{
@@ -170,8 +170,6 @@ function createSPCPlayerUI(){
 			
 			asideElement.insertBefore(timer.element, asideElement.firstChild);
 			
-			requestAnimationFrame(updateTimer);
-			
 			seekControl.style.display = "block";
 		}
 		else
@@ -230,18 +228,6 @@ function createSPCPlayerUI(){
 		}
 		
 		const time = SPCPlayer.getTime();
-		const progress = Math.min(time, timer.target);
-		const seconds = Math.floor(progress % 60);
-		
-		if(timer.lastTime !== time)
-		{
-			timer.lastTime = time;
-			
-			timer.element.innerText = `${Math.floor(progress / 60)}:${(seconds > 9) ? "" : "0"}${seconds} / `;
-			
-			const percentage = (progress / timer.target) * 100;
-			seekControl.style.backgroundImage = `linear-gradient(to right, #22B14C 0%, #22B14C ${percentage}%, rgba(255,255,255,.1) ${percentage}%)`;
-		}
 		
 		if(!finished && timer.finish > 0 && time >= timer.finish)
 		{
@@ -257,22 +243,41 @@ function createSPCPlayerUI(){
 			return;
 		}
 		
-		if(time > 1 && time % timer.target <= 1)
+		if(time > 1 && time % timer.target <= 1 && !loop.checked)
 		{
-			if(!loop.checked)
-			{
-				timer.finish = time + timer.fade / 1000;
-				
-				SPCPlayer.setVolume(SPCPlayer.getVolume());
-				SPCPlayer.setVolume(0, timer.fade / 1000);
-			}
-			else
-			{
-				return;
-			}
+			timer.finish = time + timer.fade / 1000;
+			
+			SPCPlayer.setVolume(SPCPlayer.getVolume());
+			SPCPlayer.setVolume(0, timer.fade / 1000);
+		}
+	};
+	
+	const updateUI = () => {
+		requestAnimationFrame(updateUI);
+		
+		if(
+			timer.target <= 0
+			|| timer.element.parentElement == null
+			|| SPCPlayer.status !== 1
+			|| SPCPlayer.spcPointer === null
+		)
+		{
+			return;
 		}
 		
-		requestAnimationFrame(updateTimer);
+		const time = SPCPlayer.getTime();
+		const progress = Math.min(time, timer.target);
+		const seconds = Math.floor(progress % 60);
+		
+		if(timer.lastUpdatedUI !== time)
+		{
+			timer.lastUpdatedUI = time;
+			
+			timer.element.innerText = `${Math.floor(progress / 60)}:${(seconds > 9) ? "" : "0"}${seconds} / `;
+			
+			const percentage = (progress / timer.target) * 100;
+			seekControl.style.backgroundImage = `linear-gradient(to right, #22B14C 0%, #22B14C ${percentage}%, rgba(255,255,255,.1) ${percentage}%)`;
+		}
 	};
 	
 	const extractString = (bytes, start, length) => {
@@ -320,11 +325,6 @@ function createSPCPlayerUI(){
 	});
 	
 	loop.addEventListener("change", (event) => {
-		if(!finished)
-		{
-			requestAnimationFrame(updateTimer);
-		}
-		
 		sessionStorage.setItem("spc_loop", (event.target.checked) ? "true" : "false");
 	});
 	
@@ -441,6 +441,9 @@ function createSPCPlayerUI(){
 	document.body.addEventListener("click", () => {
 		SPCPlayer.unlock();
 	});
+	
+	setInterval(updateTimer, 500);
+	requestAnimationFrame(updateUI);
 	
 	SMWCentral.SPCPlayer.parseSPC = parseSPC;
 	
