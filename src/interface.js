@@ -59,7 +59,7 @@ function createSPCPlayerUI(){
 	let currentSong = null;
 	
 	let finished = false;
-	let timer = {target: 0, finish: 0, fade: 0, element: null};
+	let timer = {lastTime: -1, target: 0, finish: 0, fade: 0, element: null};
 	
 	if(Number.isNaN(volume))
 	{
@@ -233,10 +233,15 @@ function createSPCPlayerUI(){
 		const progress = Math.min(time, timer.target);
 		const seconds = Math.floor(progress % 60);
 		
-		timer.element.innerText = `${Math.floor(progress / 60)}:${(seconds > 9) ? "" : "0"}${seconds} / `;
-		
-		const percentage = (progress / timer.target) * 100;
-		seekControl.style.backgroundImage = `linear-gradient(to right, #22B14C 0%, #22B14C ${percentage}%, rgba(255,255,255,.1) ${percentage}%)`;
+		if(timer.lastTime !== time)
+		{
+			timer.lastTime = time;
+			
+			timer.element.innerText = `${Math.floor(progress / 60)}:${(seconds > 9) ? "" : "0"}${seconds} / `;
+			
+			const percentage = (progress / timer.target) * 100;
+			seekControl.style.backgroundImage = `linear-gradient(to right, #22B14C 0%, #22B14C ${percentage}%, rgba(255,255,255,.1) ${percentage}%)`;
+		}
 		
 		if(!finished && timer.finish > 0 && time >= timer.finish)
 		{
