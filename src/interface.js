@@ -76,6 +76,19 @@ function createSPCPlayerUI(){
 			const position = Math.min(Math.max(event.offsetX, 0), range);
 			
 			volume = (1.5 * position) / range;
+			
+			if(Math.abs(volume - 1.5) < 0.05)
+			{
+				volume = 1.5;
+			}
+			else if(Math.abs(volume - 1) < 0.05)
+			{
+				volume = 1;
+			}
+			else if(Math.abs(volume - 0.5) < 0.025)
+			{
+				volume = 0.5;
+			}
 		}
 		
 		volume = Math.min(Math.max(volume, 0), 1.5);
