@@ -129,7 +129,7 @@ SMWCentral.SPCPlayer.Backend = (function()
 				return;
 			}
 			
-			if(duration === 0)
+			if(duration <= 0.02)
 			{
 				this.gainNode.gain.setValueAtTime(Math.min(Math.max(volume, 0), 1.5), this.context.currentTime);
 			}
