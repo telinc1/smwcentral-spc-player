@@ -1,6 +1,6 @@
 {
   "name": "@smwcentral/spc-player",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "SMW Central's SPC player",
   "main": "dist/spc.js",
   "files": [
