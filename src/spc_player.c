@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 		error("Couldn't create SPC player");
 		return 1;
 	}
-
+	
 	EM_ASM({
 		try {
 			SMWCentral.SPCPlayer.Backend.initialize();
@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 			console.error(error);
 		}
 	});
-
+	
 	return 0;
 }
 
@@ -58,7 +58,7 @@ void EMSCRIPTEN_KEEPALIVE loadSPC(void* spc, long spcSize)
 	}
 	
 	error(spc_load_spc(spcPlayer, spc, spcSize));
-
+	
 	spc_clear_echo(spcPlayer);
 	spc_filter_clear(filter);
 }
@@ -82,6 +82,6 @@ void EMSCRIPTEN_KEEPALIVE skipSPC(int seconds)
 		error("No SPC player created");
 		return;
 	}
-
+	
 	spc_skip(spcPlayer, seconds * 64000); // 32 kHz stereo
 }

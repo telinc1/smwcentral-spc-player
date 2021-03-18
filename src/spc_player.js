@@ -42,6 +42,12 @@ SMWCentral.SPCPlayer.Backend = (function()
 		bufferPointer: 0,
 		bufferSize: 0,
 		spcPointer: null,
+		channelBuffers: [
+			new Float32Array(16384),
+			new Float32Array(16384)
+		],
+		timeoutID: 0,
+		hasNewChannelData: false,
 		startedAt: 0,
 		initialize()
 		{
@@ -60,6 +66,7 @@ SMWCentral.SPCPlayer.Backend = (function()
 			this.bufferPointer = Module._malloc(this.bufferSize + 4);
 			
 			this.playSPC = this.playSPC.bind(this);
+			this.copyBuffers = this.copyBuffers.bind(this);
 			
 			this.gainNode.connect(this.context.destination);
 			
@@ -72,8 +79,9 @@ SMWCentral.SPCPlayer.Backend = (function()
 				throw new TypeError("Cannot play SPC right now");
 			}
 			
-			this.createProcessorNode();
 			this.stopSPC(false);
+			this.scriptProcessorNode?.disconnect(this.gainNode);
+			window.clearInterval(this.timeoutID);
 			
 			this.spcPointer = Module._malloc(spc.length * Uint8Array.BYTES_PER_ELEMENT);
 			Module.HEAPU8.set(spc, this.spcPointer);
@@ -82,9 +90,16 @@ SMWCentral.SPCPlayer.Backend = (function()
 			if(time > 0)
 			{
 				Module._skipSPC(time);
-				this.startedAt -= time;
 			}
 			
+			this.playSPC();
+			
+			this.scriptProcessorNode = this.context.createScriptProcessor(this.channelBuffers[0].length, 0, this.channelBuffers.length);
+			this.scriptProcessorNode.onaudioprocess = this.copyBuffers;
+			
+			this.startedAt = this.context.currentTime - Math.max(0, time);
+			
+			this.scriptProcessorNode.connect(this.gainNode);
 			this.resume();
 		},
 		stopSPC(pause = true)
@@ -138,19 +153,6 @@ SMWCentral.SPCPlayer.Backend = (function()
 				this.gainNode.gain.exponentialRampToValueAtTime(Math.min(Math.max(volume, 0.01), 1.5), this.context.currentTime + duration);
 			}
 		},
-		createProcessorNode()
-		{
-			if(this.scriptProcessorNode !== null)
-			{
-				this.scriptProcessorNode.disconnect(this.gainNode);
-			}
-			
-			this.scriptProcessorNode = this.context.createScriptProcessor(16384, 0, 2);
-			this.scriptProcessorNode.connect(this.gainNode);
-			this.scriptProcessorNode.onaudioprocess = this.playSPC;
-			
-			this.startedAt = this.context.currentTime;
-		},
 		getSample(channel, index)
 		{
 			const offset = this.rateRatio * index;
@@ -169,24 +171,46 @@ SMWCentral.SPCPlayer.Backend = (function()
 			
 			return lowValue + highValue;
 		},
-		playSPC({outputBuffer})
+		playSPC()
+		{
+			const {channelBuffers} = this;
+			
+			Module._playSPC(this.bufferPointer, this.lastSample * 2);
+			
+			for(let channel = 0; channel < channelBuffers.length; channel += 1)
+			{
+				const buffer = channelBuffers[channel];
+				
+				for(let index = 0; index < buffer.length; index++)
+				{
+					buffer[index] = this.getSample(channel, index) / 32000;
+				}
+			}
+			
+			this.hasNewChannelData = true;
+		},
+		copyBuffers({outputBuffer})
 		{
 			if(this.spcPointer === null || this.context.state !== "running")
 			{
 				return;
 			}
 			
-			Module._playSPC(this.bufferPointer, this.lastSample * 2);
+			if(!this.hasNewChannelData)
+			{
+				window.clearTimeout(this.timeoutID);
+				this.playSPC();
+			}
 			
 			for(let channel = 0; channel < outputBuffer.numberOfChannels; channel += 1)
 			{
-				const output = outputBuffer.getChannelData(channel);
-				
-				for(let k = 0; k < output.length; k++)
-				{
-					output[k] = this.getSample(channel, k) / 32000;
-				}
+				outputBuffer.copyToChannel(this.channelBuffers[channel], channel, 0);
 			}
+			
+			this.hasNewChannelData = false;
+			
+			window.clearTimeout(this.timeoutID);
+			this.timeoutID = window.setTimeout(this.playSPC, 0);
 		},
 		unlock()
 		{
