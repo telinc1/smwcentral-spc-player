@@ -454,6 +454,15 @@ function createSPCPlayerUI(){
 		sessionStorage.setItem("spc_volume", volume);
 	});
 	
+	volumeControl.addEventListener("wheel", (event) => {
+		event.preventDefault();
+		
+		volume += -0.05 * Math.sign(event.deltaY);
+		
+		updateVolume();
+		sessionStorage.setItem("spc_volume", volume);
+	}, {passive: false});
+	
 	document.body.addEventListener("click", () => {
 		SPCPlayer.unlock();
 	});
