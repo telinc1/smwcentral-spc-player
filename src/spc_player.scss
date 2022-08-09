@@ -1,3 +1,7 @@
+$bg_color: #121314;
+$border_color: rgba(white,0.1);
+$border_radius: 6px;
+
 @mixin toggled() {
 	[id="spc-player-toggle"]:checked ~ & {
 		@content;
@@ -12,7 +16,7 @@
 
 body.fetching-song {
 	cursor: progress;
-	
+
 	.spc-player .header a.restart,
 	.spc-player .header a.stop,
 	.spc-player li {
@@ -30,41 +34,36 @@ body.fetching-song {
 	right: 24px;
 	bottom: 0;
 	z-index: 10000;
-	background: #111;
-	border: 1px solid #EEE;
+	background: $bg_color;
 	border-bottom: none;
-	border-radius: 3px 3px 0 0;
-	opacity: 0.9;
+	border-radius: $border_radius*1.5 $border_radius*1.5 0 0;
+	box-shadow: 0 0 0 6px $border_color;
 	transition: all 220ms;
-	
-	&:hover {
-		opacity: 1;
-	}
-	
+
 	@include toggled {
 		transform: translate(0, calc(100% - 66px));
 	}
-	
+
 	[id="spc-player-toggle"] ~ &:not(.shown) {
 		transform: translate(0, 100%);
 	}
-	
+
 	@include moved {
 		right: auto;
 		left: 24px;
 	}
-	
+
 	.header {
 		display: flex;
 		justify-content: space-between;
 		padding: 8px;
-		border-bottom: 1px solid #EEE;
 		transition: padding 220ms;
-		
+		border-bottom: 1px solid $border_color;
+
 		& > div {
 			display: flex;
 		}
-		
+
 		a, label {
 			display: inline-flex;
 			align-items: center;
@@ -74,72 +73,70 @@ body.fetching-song {
 			height: 30px;
 			margin: 0 4px;
 			background: rgba(white, 0.1);
-			border: 1px solid #EEE;
-			border-radius: 3px;
+			border-radius: $border_radius;
 			cursor: pointer;
 			transition: all 220ms;
-			
+
 			&:first-child {
 				margin-left: 0;
 			}
-			
+
+			&:only-child {
+				margin-left: 0;
+				margin-right: 0;
+			}
+
 			&:last-child {
 				margin-right: 0;
 			}
-			
+
 			&:hover {
 				background: rgba(white, 0.2);
 			}
-			
+
 			& > svg {
 				fill: #fff;
 			}
-			
-			@include toggled {
-				width: 28px;
-				height: 28px;
-				margin: 0 3px;
-			}
 		}
-		
+
 		@include toggled {
 			padding: 6px;
 		}
-		
+
 		a.hidden {
 			display: none;
 		}
-		
+
 		label.toggle > svg {
 			transition: transform 220ms;
-			
+
 			@include toggled {
 				transform: rotate(-180deg);
 			}
 		}
 	}
-	
+
 	label.loop {
 		& > svg.check {
 			width: 0;
 			transition: all 220ms;
 		}
-		
+
 		[id="spc-player-loop"]:checked ~ & {
 			width: 50px;
 			background: rgba(white, 0.2);
-			
+
 			& > svg.check {
 				width: 16px;
 				margin-right: 2px;
 			}
-			
+
 			&:hover {
 				background: rgba(white, 0.3);
 			}
 		}
 	}
-	
+
 	h2, h3 {
 		margin: 4px 8px;
 		overflow: hidden;
@@ -147,66 +144,71 @@ body.fetching-song {
 		text-overflow: ellipsis;
 		color: #fff;
 	}
-	
+
 	h2 {
 		font-size: 1.25em;
 		font-weight: 700;
 		transition: all 220ms;
-		
+
 		@include toggled {
-			font-size: 12.5px;
+			font-size: 0.83em;
+			margin-top: 2px;
 		}
 	}
-	
+
 	h3 {
 		font-size: 1.2em;
 		font-weight: 400;
+		opacity: 0.8;
 	}
-	
+
 	aside {
 		margin: 4px 8px;
-		color: #fff;
-		color: rgba(white, 0.9);
+
+		&.next {
+			border:none;
+		}
 	}
-	
+
 	.seek {
 		position: relative;
 		height: 12px;
 		background: rgba(white, 0.1);
-		border-top: 1px solid #eee;
 		cursor: pointer;
-		
+		margin: 8px;
+		border-radius: $border_radius;
+
 		> span {
 			display: none;
 			position: absolute;
 			bottom: 75%;
 			padding: 0 4px;
-			border: 1px solid #eee;
-			border-radius: 3px;
-			background: #111;
+			border-radius: $border_radius*0.5;
+			background: $bg_color;
 			pointer-events: none;
 			color: #fff;
 		}
-		
+
 		&:hover > span {
 			display: block;
 		}
 	}
-	
+
 	ul {
 		max-height: 90px;
-		margin: 0;
+		margin: 8px;
+		background-color: rgba(white,.1);
+		border-radius: $border_radius;
 		padding: 0;
 		overflow: auto;
-		border-top: 1px solid #eee;
 		color: #fff;
 		list-style-type: none;
 		counter-reset: spcs;
 	}
-	
+
 	li {
-		height: 30px;
-		line-height: 30px;
+		height: 36px;
+		line-height: 36px;
 		padding: 0 8px;
 		overflow: hidden;
 		background: rgba(white, 0.04);
@@ -215,57 +217,54 @@ body.fetching-song {
 		text-overflow: ellipsis;
 		counter-increment: spcs;
 		transition: background-color 220ms;
-		
+
 		&:nth-child(even) {
 			background: rgba(white, 0.06);
 		}
-		
+
 		&:before {
 			content: counter(spcs) ". ";
 		}
-		
+
 		&:hover {
 			background: rgba(white, 0.1);
 		}
-		
+
 		&.playing {
 			padding-left: 28px;
-			background: rgba(white, 0.2) url("data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNOCA1djE0bDExLTd6IiBmaWxsPSIjZmZmIi8+PC9zdmc+") 2px 4px / 22px 22px no-repeat;
+			background: rgba(white, 0.2) url("data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNOCA1djE0bDExLTd6IiBmaWxsPSIjZmZmIi8+PC9zdmc+") 2px 6px / 22px 22px no-repeat;
 			pointer-events: none;
 		}
 	}
-	
+
 	.volume {
 		display: flex;
 		align-items: center;
 		justify-content: flex-end;
-		border-top: 1px solid #eee;
-		
+		border-top: 1px solid $border_color;
+
 		& > span {
 			color: #fff;
 			user-select: none;
 		}
-		
+
 		& > svg {
 			margin: 0 auto 0 8px;
 			fill: #fff;
 		}
-		
+
 		& > .volume-control {
-			margin: 4px;
-			border: 1px solid #eee;
-			border-top: none;
-			border-left: none;
-			border-radius: 0 1px 2px 1px;
+			margin: 6px;
 			cursor: pointer;
 		}
-		
+
 		.slider {
 			position: relative;
 			width: 96px;
 			height: 24px;
 			clip-path: polygon(100% 0%, 100% 100%, 0% 100%);
-			
+			background-color: $border_color;
+
 			& > .fill {
 				position: absolute;
 				top: 0;
@@ -276,7 +275,7 @@ body.fetching-song {
 			}
 		}
 	}
-	
+
 	.move {
 		display: flex;
 		justify-content: center;
@@ -285,36 +284,54 @@ body.fetching-song {
 		bottom: 0;
 		left: -26px;
 		width: 26px;
-		height: 34px;
+		height: 36px;
 		box-sizing: border-box;
-		background: #111;
-		border: 1px solid #eee;
-		border-bottom: none;
-		border-radius: 2px 0 0 0;
+		background: $bg_color;
+		border-radius: $border_radius 0 0 0;
 		cursor: pointer;
 		transition: background-color 220ms, bottom 220ms, height 220ms;
-		
+		box-shadow: 0 0 0 1px $border_color;
+
 		&:hover {
-			background: #2A2A2A;
+			background: lighten($bg_color, 5%);
 		}
-		
+
 		@include toggled {
 			bottom: calc(100% - 66px);
-			height: 26px;
+			height: 23px;
 		}
-		
+
 		@include moved {
 			right: -26px;
 			left: auto;
-			border-radius: 0 2px 0 0;
+			border-radius: 0 $border_radius 0 0;
 		}
-		
+
 		& > svg {
 			fill: #fff;
-			
+
 			@include moved {
 				transform: rotate(180deg);
 			}
 		}
+	}
+}
+
+// mobile
+@media only screen and (max-width:480px) {
+	.spc-player {
+		width: 100%;
+		left: auto;
+		right: 0;
+		bottom: 0;
+		border-radius: 0;
+
+		@include moved {
+			left: 0;
+			right: auto;
+		}
+	}
+	.move {
+		display: none;
 	}
 }
