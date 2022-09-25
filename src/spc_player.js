@@ -150,6 +150,7 @@ SMWCentral.SPCPlayer.Backend = (function()
 			}
 			else
 			{
+				this.gainNode.gain.cancelScheduledValues(this.context.currentTime);
 				this.gainNode.gain.exponentialRampToValueAtTime(Math.min(Math.max(volume, 0.01), 1.5), this.context.currentTime + duration);
 			}
 		},
