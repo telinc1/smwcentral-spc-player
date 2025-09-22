@@ -48,20 +48,28 @@ function createSPCPlayerUI(){
 	const loop = document.getElementById("spc-player-loop");
 	const player = document.getElementById("spc-player-interface");
 
-	const pause = player.querySelector(".pause");
-	const play = player.querySelector(".play");
+	const playerUI = {
+		pauseBtn: player.querySelector(".pause"),
+		playBtn: player.querySelector(".play"),
+		stopBtn: player.querySelector(".stop"),
+		restartBtn: player.querySelector(".restart"),
 
-	const seekContainer = player.querySelector(".seek-container");
-	const seekControl = player.querySelector(".seek");
-	const seekPreview = player.querySelector(".seek-preview");
+		details: player.querySelector(".details"),
+		playlist: player.querySelector(".track-list"),
+		subtitles: player.getElementsByClassName("subtitle"),
 
-	const trackTimeElapsed = player.querySelector(".track-time-elapsed");
-	const trackDuration = player.querySelector(".track-duration");
+		seekContainer: player.querySelector(".seek-container"),
+		seekControl: player.querySelector(".seek"),
+		seekPreview: player.querySelector(".seek-preview"),
 
-	const volumeSlider = player.querySelector("#volume-slider");
-	const volumeLabel = player.querySelector(".volume-level");
-	const volumeFill = player.querySelector(".volume-fill");
-	const volumeThumb = player.querySelector(".volume-thumb");
+		trackTimeElapsed: player.querySelector(".track-time-elapsed"),
+		trackDuration: player.querySelector(".track-duration"),
+
+		volumeSlider: player.querySelector("#volume-slider"),
+		volumeLabel: player.querySelector(".volume-level"),
+		volumeFill: player.querySelector(".volume-fill"),
+		volumeThumb: player.querySelector(".volume-thumb")
+	};
 
 	let volume = Number(sessionStorage.getItem("spc_volume") || 1);
 
@@ -75,23 +83,23 @@ function createSPCPlayerUI(){
 		volume = 1;
 	}
 
-	volumeSlider.min = 0;
-	volumeSlider.max = 1.5;
-	volumeSlider.step = 0.01;
-	volumeSlider.value = volume;
+	playerUI.volumeSlider.min = 0;
+	playerUI.volumeSlider.max = 1.5;
+	playerUI.volumeSlider.step = 0.01;
+	playerUI.volumeSlider.value = volume;
 
 	const updateVolumeSlider = () => {
-		const trackWidth = volumeSlider.clientWidth;
+		const trackWidth = playerUI.volumeSlider.clientWidth;
 		const percent = volume / 1.5;
-		const thumbWidth = volumeThumb.getBoundingClientRect().width;
+		const thumbWidth = playerUI.volumeThumb.getBoundingClientRect().width;
 
 		if (!thumbWidth) return;
 
 		const clampedLeft = Math.min(trackWidth - thumbWidth / 2, Math.max(thumbWidth / 2, percent * trackWidth));
 
-		volumeFill.style.clipPath = `inset(0 ${100 - percent * 100}% 0 0)`;
-		volumeThumb.style.left = `${clampedLeft}px`;
-		volumeLabel.innerText = `${Math.round(volume * 100)}%`;
+		playerUI.volumeFill.style.clipPath = `inset(0 ${100 - percent * 100}% 0 0)`;
+		playerUI.volumeThumb.style.left = `${clampedLeft}px`;
+		playerUI.volumeLabel.innerText = `${Math.round(volume * 100)}%`;
 
 		SPCPlayer.setVolume(volume, Math.abs(SPCPlayer.getVolume() - volume) * 0.5);
 		sessionStorage.setItem("spc_volume", volume.toString());
@@ -100,7 +108,7 @@ function createSPCPlayerUI(){
 	const updateVolume = (event = null) => {
 		if(event instanceof Event && event.type === "input")
 		{
-			let newVolume = parseFloat(volumeSlider.value);
+			let newVolume = parseFloat(playerUI.volumeSlider.value);
 
 			if(Math.abs(newVolume - 1.5) < 0.05)
 			{
@@ -119,9 +127,9 @@ function createSPCPlayerUI(){
 		updateVolumeSlider();
 	};
 
-	volumeSlider.addEventListener("input", updateVolume);
+	playerUI.volumeSlider.addEventListener("input", updateVolume);
 
-	volumeSlider.addEventListener("wheel", (e) => {
+	playerUI.volumeSlider.addEventListener("wheel", (e) => {
 		e.preventDefault();
 		const step = 0.05;
 		if (e.deltaY < 0) {
@@ -129,14 +137,14 @@ function createSPCPlayerUI(){
 		} else {
 			volume = Math.max(0, volume - step);
 		}
-		volumeSlider.value = volume.toFixed(2);
+		playerUI.volumeSlider.value = volume.toFixed(2);
 		updateVolumeSlider();
 	});
 
 	// hack to set slider position on load
 	const initSlider = () => {
-		if (volumeThumb.getBoundingClientRect().width) {
-			volumeSlider.value = volume;
+		if (playerUI.volumeThumb.getBoundingClientRect().width) {
+			playerUI.volumeSlider.value = volume;
 			updateVolumeSlider();
 		} else {
 			requestAnimationFrame(initSlider);
@@ -184,8 +192,8 @@ function createSPCPlayerUI(){
 		SPCPlayer.loadSPC(new Uint8Array(song.spc), time);
 		updateVolume();
 
-		pause.classList.remove("hidden");
-		play.classList.add("hidden");
+		playerUI.pauseBtn.classList.remove("hidden");
+		playerUI.playBtn.classList.add("hidden");
 
 		const title = [song.game, song.title].filter((value) => value.trim().length > 0);
 		const titleElements = player.getElementsByClassName("title");
@@ -194,25 +202,23 @@ function createSPCPlayerUI(){
 		}
 
 		const subtitle = [song.author, song.comment].filter((value) => value.trim().length > 0);
-		const subtitleElements = player.getElementsByClassName("subtitle");
 
-		for (let i = 0; i < subtitleElements.length; i++) {
+		for (let i = 0; i < playerUI.subtitles.length; i++) {
 			if (subtitle.length > 0) {
-				subtitleElements[i].innerHTML = "";
-				subtitleElements[i].innerText = subtitle.join(", ");
+				playerUI.subtitles[i].innerHTML = "";
+				playerUI.subtitles[i].innerText = subtitle.join(", ");
 			} else {
-				subtitleElements[i].innerHTML = '<i style="opacity:0.5;">No Track Info</i>';
+				playerUI.subtitles[i].innerHTML = '<i style="opacity:0.5;">No Track Info</i>';
 			}
 		}
 
 		// fill track details
 		const date = song.date.trim();
-		const detailsElement = player.querySelector(".details");
 
 		if (date) {
-			detailsElement.innerText = `Exported on ${date}`;
+			playerUI.details.innerText = `Exported on ${date}`;
 		} else {
-			detailsElement.innerHTML = '<i style="opacity:0.5;">No Track Details</i>';
+			playerUI.details.innerHTML = '<i style="opacity:0.5;">No Track Details</i>';
 		}
 
 		// display duration
@@ -221,7 +227,7 @@ function createSPCPlayerUI(){
 			timer.target = song.duration;
 
 			const seconds = song.duration % 60;
-			trackDuration.innerText = `${Math.floor(song.duration / 60)}:${(seconds > 9) ? "" : "0"}${seconds}`;
+			playerUI.trackDuration.innerText = `${Math.floor(song.duration / 60)}:${(seconds > 9) ? "" : "0"}${seconds}`;
 		}
 		else
 		{
@@ -232,22 +238,21 @@ function createSPCPlayerUI(){
 		if(timer.target > 0)
 		{
 			const seconds = Math.floor(time % 60);
-			trackTimeElapsed.innerText = `${Math.floor(time / 60)}:${(seconds > 9) ? "" : "0"}${seconds}`;
-			seekContainer.style.display = "flex";
+			playerUI.trackTimeElapsed.innerText = `${Math.floor(time / 60)}:${(seconds > 9) ? "" : "0"}${seconds}`;
+			playerUI.seekContainer.style.display = "flex";
 		}
 		else
 		{
-			seekContainer.style.display = "none";
+			playerUI.seekContainer.style.display = "none";
 		}
 
 		// fill track list
-		const playlist = player.querySelector(".track-list");
 
 		if(song.files.length > 1)
 		{
-			while(playlist.lastChild !== null)
+			while(playerUI.playlist.lastChild !== null)
 			{
-				playlist.removeChild(playlist.lastChild);
+				playerUI.playlist.removeChild(playerUI.playlist.lastChild);
 			}
 
 			const files = song.files;
@@ -264,14 +269,14 @@ function createSPCPlayerUI(){
 			const prefix = files[0].slice(0, common).lastIndexOf("/") + 1;
 
 			files.forEach((file, index) => {
-				playlist.appendChild(SMWCentral.SPCPlayer.createPlaylistItem(song, file.slice(prefix), index));
+				playerUI.playlist.appendChild(SMWCentral.SPCPlayer.createPlaylistItem(song, file.slice(prefix), index));
 			});
 
-			playlist.style.display = "block";
+			playerUI.playlist.style.display = "block";
 		}
 		else
 		{
-			playlist.style.display = "none";
+			playerUI.playlist.style.display = "none";
 		}
 
 		currentSong = song;
@@ -296,8 +301,8 @@ function createSPCPlayerUI(){
 		{
 			finished = true;
 
-			pause.classList.add("hidden");
-			play.classList.remove("hidden");
+			playerUI.pauseBtn.classList.add("hidden");
+			playerUI.playBtn.classList.remove("hidden");
 
 			SPCPlayer.stopSPC();
 
@@ -335,10 +340,10 @@ function createSPCPlayerUI(){
 		{
 			timer.lastUpdatedUI = time;
 
-			trackTimeElapsed.innerText = `${Math.floor(progress / 60)}:${(seconds > 9) ? "" : "0"}${seconds}`;
+			playerUI.trackTimeElapsed.innerText = `${Math.floor(progress / 60)}:${(seconds > 9) ? "" : "0"}${seconds}`;
 
 			const percentage = (progress / timer.target) * 100;
-			seekControl.style.backgroundImage = `linear-gradient(to right, var(--seek_fill) 0%, var(--seek_fill) ${percentage}%, var(--seek_bar) ${percentage}%)`;
+			playerUI.seekControl.style.backgroundImage = `linear-gradient(to right, var(--seek_fill) 0%, var(--seek_fill) ${percentage}%, var(--seek_bar) ${percentage}%)`;
 		}
 	};
 
@@ -390,16 +395,16 @@ function createSPCPlayerUI(){
 	});
 
 
-	pause.addEventListener("click", () => {
+	playerUI.pauseBtn.addEventListener("click", () => {
 		SPCPlayer.pause();
 
-		pause.classList.add("hidden");
-		play.classList.remove("hidden");
+		playerUI.pauseBtn.classList.add("hidden");
+		playerUI.playBtn.classList.remove("hidden");
 
 		SMWCentral.SPCPlayer.onPause();
 	});
 
-	play.addEventListener("click", () => {
+	playerUI.playBtn.addEventListener("click", () => {
 		if(finished)
 		{
 			if(!document.body.classList.contains("fetching-song"))
@@ -412,14 +417,14 @@ function createSPCPlayerUI(){
 		{
 			SPCPlayer.resume();
 
-			pause.classList.remove("hidden");
-			play.classList.add("hidden");
+			playerUI.pauseBtn.classList.remove("hidden");
+			playerUI.playBtn.classList.add("hidden");
 		}
 
 		SMWCentral.SPCPlayer.onPlay();
 	});
 
-	player.querySelector(".restart").addEventListener("click", () => {
+	playerUI.restartBtn.addEventListener("click", () => {
 		if(document.body.classList.contains("fetching-song"))
 		{
 			return;
@@ -431,7 +436,7 @@ function createSPCPlayerUI(){
 		SMWCentral.SPCPlayer.onRestart();
 	});
 
-	player.querySelector(".stop").addEventListener("click", () => {
+	playerUI.stopBtn.addEventListener("click", () => {
 		if(document.body.classList.contains("fetching-song"))
 		{
 			return;
@@ -443,7 +448,7 @@ function createSPCPlayerUI(){
 		SMWCentral.SPCPlayer.onStop();
 	});
 
-	seekControl.addEventListener("mousemove", (event) => {
+	playerUI.seekControl.addEventListener("mousemove", (event) => {
 		if(timer.target <= 0)
 		{
 			return;
@@ -454,11 +459,11 @@ function createSPCPlayerUI(){
 		const seconds = Math.round(Math.min(Math.max((timer.target * position) / range, 0), timer.target));
 		const fraction = seconds % 60;
 
-		seekPreview.innerText = `${Math.floor(seconds / 60)}:${(fraction > 9) ? "" : "0"}${fraction}`;
-		seekPreview.style.transform = `translate(calc(${position}px - 50%), 0)`;
+		playerUI.seekPreview.innerText = `${Math.floor(seconds / 60)}:${(fraction > 9) ? "" : "0"}${fraction}`;
+		playerUI.seekPreview.style.transform = `translate(calc(${position}px - 50%), 0)`;
 	});
 
-	seekControl.addEventListener("mouseup", (event) => {
+	playerUI.seekControl.addEventListener("mouseup", (event) => {
 		if(document.body.classList.contains("fetching-song") || timer.target <= 0)
 		{
 			return;
