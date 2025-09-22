@@ -416,22 +416,6 @@ body {
 		}
 	}
 
-	// up next
-	.up-next {
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-
-		padding: 0 3px;
-		padding-top: 6px;
-		border-top: 1px solid var(--player_borders);
-
-		span {
-			font-weight: bold;
-			color: inherit;
-		}
-	}
-
 	// volume control
 	.volume {
 		display: flex;
