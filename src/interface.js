@@ -487,13 +487,109 @@ function createSPCPlayerUI(){
 	).then(loadSPC);
 };
 
+// function to allow the player window to be dragged
+function dragSPCPlayer(element, handle) {
+	let isDragging = false;
+	let startX = 0,
+		startY = 0;
+	let currentX = 0,
+		currentY = 0;
+	let offsetX = 0,
+		offsetY = 0;
+
+	// drag with mouse
+	handle.addEventListener("mousedown", (e) => {
+		if (e.target.closest(".header-button")) return;
+
+		e.preventDefault();
+		isDragging = true;
+
+		startX = e.clientX - offsetX;
+		startY = e.clientY - offsetY;
+
+		document.addEventListener("mousemove", onMouseMove);
+		document.addEventListener("mouseup", stopDragging);
+	});
+
+	function onMouseMove(e) {
+		if (!isDragging) return;
+
+		currentX = e.clientX - startX;
+		currentY = e.clientY - startY;
+		offsetX = currentX;
+		offsetY = currentY;
+
+		element.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+	}
+
+	function stopDragging() {
+		isDragging = false;
+		document.removeEventListener("mousemove", onMouseMove);
+		document.removeEventListener("mouseup", stopDragging);
+	}
+
+	// drag on touch (on not phones)
+	if (window.innerWidth >= 768) {
+		handle.addEventListener("touchstart", (e) => {
+			if (e.target.closest(".header-button")) return;
+
+			isDragging = true;
+			const touch = e.touches[0];
+			startX = touch.clientX - offsetX;
+			startY = touch.clientY - offsetY;
+
+			document.addEventListener("touchmove", onTouchMove, {passive: false});
+			document.addEventListener("touchend", stopTouchDragging);
+		});
+
+		function onTouchMove(e) {
+			if (!isDragging) return;
+			e.preventDefault();
+
+			const touch = e.touches[0];
+			currentX = touch.clientX - startX;
+			currentY = touch.clientY - startY;
+			offsetX = currentX;
+			offsetY = currentY;
+
+			element.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+		}
+
+		function stopTouchDragging() {
+			isDragging = false;
+			document.removeEventListener("touchmove", onTouchMove);
+			document.removeEventListener("touchend", stopTouchDragging);
+		}
+	}
+
+	// reset position
+	function resetPosition() {
+		offsetX = 0;
+		offsetY = 0;
+		element.style.transform = `translate3d(0,0,0)`;
+	}
+	return {resetPosition};
+}
+
+const player = document.getElementById("spc-player-interface");
+const header = player.querySelector("#spc-player-header");
+const closeBtn = player.querySelector(".close");
+
+closeBtn.addEventListener("click", () => {
+	dragSPCPlayer(player, header).resetPosition();
+});
+
 if(document.readyState === "loading")
 {
-	document.addEventListener("DOMContentLoaded", createSPCPlayerUI);
+	document.addEventListener("DOMContentLoaded", () => {
+		createSPCPlayerUI();
+		dragSPCPlayer(player, header);
+	});
 }
 else
 {
 	createSPCPlayerUI();
+	dragSPCPlayer(player, header);
 }
 
 })();
