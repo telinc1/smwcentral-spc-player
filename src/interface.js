@@ -197,21 +197,23 @@ function createSPCPlayerUI(){
 		const subtitleElements = player.getElementsByClassName("subtitle");
 
 		for (let i = 0; i < subtitleElements.length; i++) {
-			subtitleElements[i].innerText = subtitle.join(", ");
-			subtitleElements[i].style.display = (subtitle.length > 0) ? "block" : "none";
+			if (subtitle.length > 0) {
+				subtitleElements[i].innerHTML = "";
+				subtitleElements[i].innerText = subtitle.join(", ");
+			} else {
+				subtitleElements[i].innerHTML = '<i style="opacity:0.5;">No Track Info</i>';
+			}
 		}
 
 		// fill track details
-		const details = [];
+		const date = song.date.trim();
 		const detailsElement = player.querySelector(".details");
 
-		if(song.date.trim().length > 0)
-		{
-			details.push(`Exported on ${song.date}`);
+		if (date) {
+			detailsElement.innerText = `Exported on ${date}`;
+		} else {
+			detailsElement.innerHTML = '<i style="opacity:0.5;">No Track Details</i>';
 		}
-
-		detailsElement.style.display = (details.length > 0) ? "block" : "none";
-		detailsElement.innerText = details.join(", ");
 
 		// display duration
 		if(song.duration > 0)
