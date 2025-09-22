@@ -308,10 +308,21 @@ body {
 		justify-content: space-between;
 		align-items: center;
 		gap: 8px;
-		padding: 0 3px;
 
 		span {
 			user-select: none;
+
+			&.track-time-elapsed,
+			&.track-duration {
+				min-width: 30px;
+				font-variant-numeric: tabular-nums;
+			}
+			&.track-time-elapsed {
+				text-align: right;
+			}
+			&.track-duration {
+				text-align: left;
+			}
 		}
 
 		@include player-toggled {
@@ -326,6 +337,7 @@ body {
 			border-radius: 5px;
 			flex: 1;
 			cursor: pointer;
+			background-color: var(--seek_bar);
 
 			@include player-toggled {
 				height: 8px;

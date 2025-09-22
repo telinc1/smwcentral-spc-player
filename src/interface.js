@@ -241,11 +241,12 @@ function createSPCPlayerUI(){
 		{
 			const seconds = Math.floor(time % 60);
 			playerUI.trackTimeElapsed.innerText = `${Math.floor(time / 60)}:${(seconds > 9) ? "" : "0"}${seconds}`;
-			playerUI.seekContainer.classList.remove("hidden");
+			playerUI.trackTimeElapsed.style.opacity = `1`
 		}
 		else
 		{
-			playerUI.seekContainer.classList.add("hidden");
+			playerUI.trackTimeElapsed.innerText = `ERR`
+			playerUI.trackTimeElapsed.style.opacity = `0.5`
 		}
 
 		// fill track list
@@ -329,6 +330,7 @@ function createSPCPlayerUI(){
 			|| SPCPlayer.spcPointer === null
 		)
 		{
+			playerUI.seekControl.style.backgroundImage = `none`; // reset seek bar
 			return;
 		}
 
