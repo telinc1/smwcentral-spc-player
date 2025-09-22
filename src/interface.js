@@ -239,11 +239,11 @@ function createSPCPlayerUI(){
 		{
 			const seconds = Math.floor(time % 60);
 			playerUI.trackTimeElapsed.innerText = `${Math.floor(time / 60)}:${(seconds > 9) ? "" : "0"}${seconds}`;
-			playerUI.seekContainer.style.display = "flex";
+			playerUI.seekContainer.classList.remove("hidden");
 		}
 		else
 		{
-			playerUI.seekContainer.style.display = "none";
+			playerUI.seekContainer.classList.add("hidden");
 		}
 
 		// fill track list
@@ -272,11 +272,11 @@ function createSPCPlayerUI(){
 				playerUI.playlist.appendChild(SMWCentral.SPCPlayer.createPlaylistItem(song, file.slice(prefix), index));
 			});
 
-			playerUI.playlist.style.display = "block";
+			playerUI.playlist.classList.remove("hidden");
 		}
 		else
 		{
-			playerUI.playlist.style.display = "none";
+			playerUI.playlist.classList.add("hidden");
 		}
 
 		currentSong = song;

@@ -95,6 +95,11 @@ body {
 		border-radius: 8px;
 	}
 
+	// hidden elements
+	.hidden {
+		display: none !important;
+	}
+
 	// header
 	.header {
 		display: flex;
@@ -239,10 +244,6 @@ body {
 					}
 				}
 			}
-		}
-
-		.hidden {
-			display: none;
 		}
 	}
 
