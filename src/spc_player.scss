@@ -1,4 +1,5 @@
 :root {
+	// player UI colors
 	--player_bg: rgba(18, 19, 20, 0.9);
 	--player_text: #fff;
 	--player_borders: color-mix(in srgb, var(--player_text), transparent 85%);
@@ -7,9 +8,22 @@
 	--seek_fill: #16bc10;
 	--seek_bar: color-mix(in srgb, var(--player_text), transparent 85%);
 
+	// volume bar colors
 	--volume_fill: #338fdf;
 	--volume_overfill: #dfc033;
 	--volume_bar: color-mix(in srgb, var(--player_text), transparent 85%);
+
+	// button colors
+	--button_fill: color-mix(in srgb, var(--player_text), transparent 85%);
+	--button_hover_fill: color-mix(in srgb, var(--player_text), transparent 75%);
+	--button_active_fill: color-mix(in srgb, var(--player_text), transparent 75%);
+
+	--button_checked_fill: #75d1ff;
+
+	// list colors
+	--list_item_fill: color-mix(in srgb, var(--player_text), transparent 95%);
+	--list_item_hover_fill: color-mix(in srgb, var(--player_text), transparent 88%);
+	--list_item_active_fill: color-mix(in srgb, var(--player_text), transparent 83%);
 }
 
 @mixin player-toggled() {
@@ -82,7 +96,6 @@ body {
 		right: 6px;
 		bottom: 6px;
 		width: calc(100% - 12px);
-		border-radius: 8px;
 	}
 
 	// anchor player differently on large displays
@@ -141,8 +154,7 @@ body {
 			cursor: pointer;
 
 			&:hover {
-				background-image: none;
-				background: color-mix(in srgb, var(--player_text), transparent 80%);
+				background-color: var(--button_hover_fill);
 			}
 
 			&.toggle > svg {
@@ -212,7 +224,7 @@ body {
 
 		& > div {
 			display: flex;
-			gap: 8px;
+			gap: 6px;
 		}
 
 		a,
@@ -225,12 +237,10 @@ body {
 			height: 30px;
 			border-radius: 6px;
 			cursor: pointer;
-
-			background: color-mix(in srgb, var(--player_text), transparent 87%);
+			background-color: var(--button_fill);
 
 			&:hover {
-				background-image: none;
-				background: color-mix(in srgb, var(--player_text), transparent 80%);
+				background-color: var(--button_hover_fill);
 			}
 
 			&.loop {
@@ -243,15 +253,14 @@ body {
 				}
 
 				[id="spc-player-loop"]:checked ~ & {
-					background-color: color-mix(in srgb, var(--player_bg), rgb(117, 209, 255) 15%);
+					background-color: color-mix(in srgb, var(--button_checked_fill), transparent 70%);
 					&:hover {
-						background-image: none;
-						background-color: color-mix(in srgb, var(--player_bg), rgb(117, 209, 255) 25%);
+						background-color: color-mix(in srgb, var(--button_checked_fill), transparent 60%);
 					}
 
 					& > svg {
 						transform: rotate(-90deg);
-						fill: rgb(117, 209, 255);
+						fill: color-mix(in srgb, var(--button_checked_fill), var(--player_text) 50%);
 					}
 				}
 			}
@@ -325,7 +334,11 @@ body {
 			&.track-duration {
 				min-width: 30px;
 				font-variant-numeric: tabular-nums;
+				@include mobile-small {
+					font-size: 13px;
+				}
 			}
+
 			&.track-time-elapsed {
 				text-align: right;
 			}
@@ -336,7 +349,6 @@ body {
 
 		@include player-toggled {
 			font-size: smaller;
-			padding: 0 6px;
 		}
 
 		// seek bar
@@ -377,7 +389,6 @@ body {
 
 	#track-list-container {
 		position: relative;
-		border-radius: 6px;
 
 		@include player-toggled {
 			display: none !important;
@@ -406,14 +417,14 @@ body {
 				li {
 					height: $playlist_item_height;
 					line-height: $playlist_item_height;
-					border-radius: 4px;
+					border-radius: 6px;
 					padding: 0 8px;
 					overflow: hidden;
 					white-space: nowrap;
 					text-overflow: ellipsis;
 					counter-increment: spcs;
 					transition: background-color 220ms;
-					background: color-mix(in srgb, var(--player_text), transparent 95%);
+					background-color: var(--list_item_fill);
 					cursor: pointer;
 
 					&:before {
@@ -422,21 +433,20 @@ body {
 					}
 
 					&:hover {
-						background: color-mix(in srgb, var(--player_text), transparent 90%);
+						background-color: var(--list_item_hover_fill);
 					}
 
 					&.playing {
 						pointer-events: none;
 						font-weight: bold;
 						cursor: default;
-						background: color-mix(in srgb, var(--player_text), transparent 87%);
+						background-color: var(--list_item_active_fill);
 
 						// draw a play triangle without emoji rendering
 						&::before {
 							content: "▶⠀" counter(spcs) ".";
 							font-family: sans-serif;
-  							font-variant-emoji: text;
-							padding-right: 6px;
+							font-variant-emoji: text;
 						}
 					}
 
@@ -457,7 +467,7 @@ body {
 			pointer-events: none;
 
 			opacity: 0;
-			transition: opacity .1s ease;
+			transition: opacity 0.1s ease;
 
 			&.top {
 				top: 0;
