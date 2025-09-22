@@ -63,7 +63,7 @@ body {
 	bottom: 16px;
 	z-index: 10000;
 	background: var(--player_bg);
-  	backdrop-filter: blur(7px);
+	backdrop-filter: blur(7px);
 	border-radius: 12px;
 	box-shadow:
 		0 0px 0px 3px rgba(white, 0.1),
@@ -73,7 +73,23 @@ body {
 	overflow: hidden;
 
 	will-change: transform;
-	transform: translate3d(0,0,0);
+	transform: translate3d(0, 0, 0);
+
+	@include mobile-small {
+		left: auto;
+		right: 6px;
+		bottom: 6px;
+		width: calc(100% - 12px);
+		border-radius: 8px;
+	}
+
+	// anchor player differently on large displays
+	@media screen and (min-width: 2560px) {
+		bottom: 24px;
+		right: auto;
+		top: auto;
+		left: calc(50% + (880px - 400px));
+	}
 
 	&:not(.shown) {
 		display: none;
@@ -86,20 +102,6 @@ body {
 	* {
 		color: var(--player_text);
 	}
-
-	@include mobile-small {
-		left: auto;
-		right: 6px;
-		bottom: 6px;
-		width: calc(100% - 12px);
-		border-radius: 8px;
-	}
-
-	// hidden elements
-	.hidden {
-		display: none !important;
-	}
-
 	// header
 	.header {
 		display: flex;
@@ -138,7 +140,7 @@ body {
 
 			&:hover {
 				background-image: none;
-				background: color-mix(in srgb, var(--player_bg), white 20%);
+				background: color-mix(in srgb, var(--player_text), transparent 80%);
 			}
 
 			&.toggle > svg {
@@ -173,7 +175,6 @@ body {
 				}
 			}
 		}
-
 	}
 
 	// player window content
@@ -215,11 +216,11 @@ body {
 			border-radius: 6px;
 			cursor: pointer;
 
-			background: color-mix(in srgb, var(--player_bg), white 13%);
+			background: color-mix(in srgb, var(--player_text), transparent 87%);
 
 			&:hover {
 				background-image: none;
-				background: color-mix(in srgb, var(--player_bg), white 20%);
+				background: color-mix(in srgb, var(--player_text), transparent 80%);
 			}
 
 			&.loop {
@@ -336,7 +337,7 @@ body {
 				bottom: 75%;
 				padding: 0 4px;
 				border-radius: 3px;
-				background: rgba(0,0,0,0.97);
+				background: rgba(0, 0, 0, 0.97);
 				pointer-events: none;
 			}
 
@@ -350,68 +351,103 @@ body {
 		}
 	}
 
-	// track list
-	ul.track-list {
-		max-height: 216px;
-		background: color-mix(in srgb, var(--player_bg), white 5%);
+	// track list container
+	$playlist_item_height: 32px;
+
+	#track-list-container {
+		position: relative;
 		border-radius: 6px;
-		padding: 0;
-		overflow: auto;
-		color: inherit;
-		list-style-type: none;
-		counter-reset: spcs;
 
 		@include player-toggled {
 			display: none !important;
 		}
 
-		@include mobile-small {
-			max-height: 160px;
-		}
-
-		li {
-			height: 36px;
-			line-height: 36px;
-			padding: 0 8px;
-			overflow: hidden;
-			background-color: transparent;
-			cursor: pointer;
-			white-space: nowrap;
-			text-overflow: ellipsis;
-			counter-increment: spcs;
-			transition: background-color 220ms;
-
-			&:nth-child(even) {
-				background: rgba(white, 0.03);
-			}
-
-			&:before {
-				content: counter(spcs) ". ";
-			}
-
-			&:hover {
-				background: rgba(white, 0.07);
-			}
-
-			&.playing {
-				padding-left: 28px;
-				background: rgba(white, 0.1)
-					url("data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNOCA1djE0bDExLTd6IiBmaWxsPSIjZmZmIi8+PC9zdmc+")
-					2px 6px / 22px 22px no-repeat;
-				pointer-events: none;
-				color: white;
-				font-weight: bold;
-			}
+		// scroll box for the track list
+		.track-list-scrollbox {
+			max-height: calc($playlist_item_height * 6);
+			overflow-y: auto;
 
 			@include mobile-small {
-				height: 32px;
-				line-height: 32px;
-				font-size: 13px;
+				max-height: calc($playlist_item_height * 4);
+			}
 
-				&.playing {
-					background-size: 18px;
-					padding-left: 22px;
+			// track list
+			ul.track-list {
+				margin: 0;
+				padding: 0;
+				color: inherit;
+				list-style-type: none;
+				counter-reset: spcs;
+				display: flex;
+				flex-direction: column;
+				gap: 4px;
+
+				li {
+					height: $playlist_item_height;
+					line-height: $playlist_item_height;
+					border-radius: 4px;
+					padding: 0 8px;
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					counter-increment: spcs;
+					transition: background-color 220ms;
+					background: color-mix(in srgb, var(--player_text), transparent 95%);
+					cursor: pointer;
+
+					&:before {
+						content: counter(spcs) ". ";
+					}
+
+					&:hover {
+						background: color-mix(in srgb, var(--player_text), transparent 92%);
+					}
+
+
+					&.playing {
+						pointer-events: none;
+						font-weight: bold;
+						cursor: default;
+						background: color-mix(in srgb, var(--player_text), transparent 87%);
+
+						// draw a play triangle without emoji rendering
+						&::before {
+							content: "▶⠀" counter(spcs) ".";
+							font-family: sans-serif;
+  							font-variant-emoji: text;
+							padding-right: 6px;
+						}
+					}
+
+					@include mobile-small {
+						font-size: 13px;
+					}
 				}
+			}
+		}
+
+		// overflow indicators
+		.overflow-indicator {
+			position: absolute;
+			height: 16px;
+
+			left: 0;
+			right: 0;
+			pointer-events: none;
+
+			opacity: 0;
+			transition: opacity .1s ease;
+
+			&.top {
+				top: 0;
+				background: linear-gradient(to bottom, var(--player_bg) 0%, transparent 60%);
+			}
+			&.bottom {
+				bottom: 0;
+				background: linear-gradient(to top, var(--player_bg) 0%, transparent 60%);
+			}
+			&.visible {
+				opacity: 1;
 			}
 		}
 	}
@@ -436,7 +472,7 @@ body {
 		$volume_handle_size: 20px;
 
 		.volume-control {
-  			position: relative;
+			position: relative;
 			width: $volume_slider_width;
 			height: $volume_slider_height;
 
@@ -465,7 +501,13 @@ body {
 				background: var(--volume_bar);
 
 				.volume-fill {
-					background: linear-gradient(to right, var(--volume_fill) 0%,  var(--volume_fill)  66%, var(--volume_overfill) 66%, var(--volume_overfill) 100%);
+					background: linear-gradient(
+						to right,
+						var(--volume_fill) 0%,
+						var(--volume_fill) 66%,
+						var(--volume_overfill) 66%,
+						var(--volume_overfill) 100%
+					);
 					clip-path: inset(0 100% 0 0);
 					transition: clip-path 0.2s ease;
 				}
@@ -484,6 +526,10 @@ body {
 				}
 			}
 		}
+	}
 
+	// hidden elements
+	.hidden {
+		display: none !important;
 	}
 }

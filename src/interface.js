@@ -55,8 +55,10 @@ function createSPCPlayerUI(){
 		restartBtn: player.querySelector(".restart"),
 
 		details: player.querySelector(".details"),
-		playlist: player.querySelector(".track-list"),
 		subtitles: player.getElementsByClassName("subtitle"),
+
+		trackListContainer: player.querySelector('#track-list-container'),
+		tracklist: player.querySelector(".track-list"),
 
 		seekContainer: player.querySelector(".seek-container"),
 		seekControl: player.querySelector(".seek"),
@@ -247,12 +249,11 @@ function createSPCPlayerUI(){
 		}
 
 		// fill track list
-
 		if(song.files.length > 1)
 		{
-			while(playerUI.playlist.lastChild !== null)
+			while(playerUI.tracklist.lastChild !== null)
 			{
-				playerUI.playlist.removeChild(playerUI.playlist.lastChild);
+				playerUI.tracklist.removeChild(playerUI.tracklist.lastChild);
 			}
 
 			const files = song.files;
@@ -269,14 +270,13 @@ function createSPCPlayerUI(){
 			const prefix = files[0].slice(0, common).lastIndexOf("/") + 1;
 
 			files.forEach((file, index) => {
-				playerUI.playlist.appendChild(SMWCentral.SPCPlayer.createPlaylistItem(song, file.slice(prefix), index));
+				playerUI.tracklist.appendChild(SMWCentral.SPCPlayer.createPlaylistItem(song, file.slice(prefix), index));
 			});
-
-			playerUI.playlist.classList.remove("hidden");
+			playerUI.trackListContainer.classList.remove("hidden");
 		}
 		else
 		{
-			playerUI.playlist.classList.add("hidden");
+			playerUI.trackListContainer.classList.add("hidden");
 		}
 
 		currentSong = song;
@@ -586,17 +586,46 @@ closeBtn.addEventListener("click", () => {
 	dragSPCPlayer(player, header).resetPosition();
 });
 
+// display an overflow indicator for long track lists
+function trackListOverflow() {
+	const player = document.getElementById("spc-player-interface");
+
+	const trackList = player.querySelector('#track-list-container');
+	const scrollbox = trackList.querySelector('.track-list-scrollbox');
+	const topIndicator = trackList.querySelector('.overflow-indicator.top');
+	const btmIndicator = trackList.querySelector('.overflow-indicator.bottom');
+
+	function updateOverflowDisplay() {
+		const { scrollTop, clientHeight, scrollHeight } = scrollbox;
+		topIndicator.classList.toggle('visible', scrollTop > 0);
+		btmIndicator.classList.toggle('visible', scrollTop + clientHeight < scrollHeight);
+	}
+
+	if (scrollbox.scrollHeight > scrollbox.clientHeight) {
+		btmIndicator.classList.add('visible');
+	}
+
+	const observer = new MutationObserver(() => updateOverflowDisplay());
+	observer.observe(scrollbox, { childList: true, subtree: true });
+
+	scrollbox.addEventListener('scroll', updateOverflowDisplay);
+
+	updateOverflowDisplay();
+}
+
 if(document.readyState === "loading")
 {
 	document.addEventListener("DOMContentLoaded", () => {
 		createSPCPlayerUI();
 		dragSPCPlayer(player, header);
+		trackListOverflow();
 	});
 }
 else
 {
 	createSPCPlayerUI();
 	dragSPCPlayer(player, header);
+	trackListOverflow();
 }
 
 })();
