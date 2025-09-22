@@ -24,10 +24,13 @@
 	}
 }
 
-
 @keyframes marquee {
-	0%   { transform: translateX(0); }
-	100% { transform: translateX(-100%); }
+	0% {
+		transform: translateX(0);
+	}
+	100% {
+		transform: translateX(-100%);
+	}
 }
 
 body {
@@ -48,7 +51,6 @@ body {
 		display: none;
 	}
 }
-
 
 #spc-player-toggle,
 #spc-player-loop {
@@ -146,12 +148,20 @@ body {
 			&.toggle > svg {
 				transition: display ease 100ms;
 
-				&.expand { display: none; }
-				&.shrink { display: inline;	}
+				&.expand {
+					display: none;
+				}
+				&.shrink {
+					display: inline;
+				}
 
 				@include player-toggled {
-					&.expand { display: inline;	}
-					&.shrink { display: none; }
+					&.expand {
+						display: inline;
+					}
+					&.shrink {
+						display: none;
+					}
 				}
 			}
 		}
@@ -302,7 +312,6 @@ body {
 		}
 	}
 
-
 	.seek-container {
 		display: flex;
 		justify-content: space-between;
@@ -408,13 +417,13 @@ body {
 					cursor: pointer;
 
 					&:before {
-						content: counter(spcs) ". ";
+						content: counter(spcs) ".";
+						padding-right: 6px;
 					}
 
 					&:hover {
-						background: color-mix(in srgb, var(--player_text), transparent 92%);
+						background: color-mix(in srgb, var(--player_text), transparent 90%);
 					}
-
 
 					&.playing {
 						pointer-events: none;

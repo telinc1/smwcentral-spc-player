@@ -73,12 +73,12 @@ function createSPCPlayerUI(){
 		volumeThumb: player.querySelector(".volume-thumb")
 	};
 
-	let volume = Number(sessionStorage.getItem("spc_volume") || 1);
-
 	let currentSong = null;
 
 	let finished = false;
 	let timer = {lastUpdatedUI: -1, target: 0, finish: 0, fade: 0, element: null};
+
+	let volume = Number(sessionStorage.getItem("spc_volume") || 1);
 
 	if(Number.isNaN(volume))
 	{
@@ -129,30 +129,15 @@ function createSPCPlayerUI(){
 		updateVolumeSlider();
 	};
 
-	playerUI.volumeSlider.addEventListener("input", updateVolume);
-
-	playerUI.volumeSlider.addEventListener("wheel", (e) => {
-		e.preventDefault();
-		const step = 0.05;
-		if (e.deltaY < 0) {
-			volume = Math.min(1.5, volume + step);
-		} else {
-			volume = Math.max(0, volume - step);
-		}
-		playerUI.volumeSlider.value = volume.toFixed(2);
-		updateVolumeSlider();
-	});
-
 	// hack to set slider position on load
-	const initSlider = () => {
+	const initVolumeSlider = () => {
 		if (playerUI.volumeThumb.getBoundingClientRect().width) {
 			playerUI.volumeSlider.value = volume;
 			updateVolumeSlider();
 		} else {
-			requestAnimationFrame(initSlider);
+			requestAnimationFrame(initVolumeSlider);
 		}
 	};
-	initSlider();
 
 	const loadSong = (song, time = 0) => {
 		if(SPCPlayer.status < 0)
@@ -384,19 +369,35 @@ function createSPCPlayerUI(){
 	};
 
 	updateVolume();
+	initVolumeSlider();
 
+	// player state listeners
 	toggle.checked = (sessionStorage.getItem("spc_collapsed") === "true");
-	loop.checked = (sessionStorage.getItem("spc_loop") !== "false");
-
 	toggle.addEventListener("change", (event) => {
 		sessionStorage.setItem("spc_collapsed", (event.target.checked) ? "true" : "false");
 	});
 
+	loop.checked = (sessionStorage.getItem("spc_loop") !== "false");
 	loop.addEventListener("change", (event) => {
 		sessionStorage.setItem("spc_loop", (event.target.checked) ? "true" : "false");
 	});
 
+	// volume control listeners
+	playerUI.volumeSlider.addEventListener("input", updateVolume);
 
+	playerUI.volumeSlider.addEventListener("wheel", (e) => {
+		e.preventDefault();
+		const step = 0.05;
+		if (e.deltaY < 0) {
+			volume = Math.min(1.5, volume + step);
+		} else {
+			volume = Math.max(0, volume - step);
+		}
+		playerUI.volumeSlider.value = volume.toFixed(2);
+		updateVolumeSlider();
+	});
+
+	// playback control listeners
 	playerUI.pauseBtn.addEventListener("click", () => {
 		SPCPlayer.pause();
 
@@ -450,6 +451,7 @@ function createSPCPlayerUI(){
 		SMWCentral.SPCPlayer.onStop();
 	});
 
+	// seek control listeners
 	playerUI.seekControl.addEventListener("mousemove", (event) => {
 		if(timer.target <= 0)
 		{
