@@ -296,7 +296,11 @@
 			requestAnimationFrame(updateUI);
 
 			if (timer.target <= 0 || SPCPlayer.status !== 1 || SPCPlayer.spcPointer === null) {
-				playerUI.seekControl.style.backgroundImage = `none`; // reset seek bar
+				// reset seek bar, unless we've just finished playing
+				if (!finished) {
+					playerUI.seekControl.style.backgroundImage = `none`;
+				}
+
 				return;
 			}
 
