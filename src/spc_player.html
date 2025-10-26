@@ -1,60 +1,99 @@
 <div id="spc-player-container">
-	<input type="checkbox" id="spc-player-toggle">
-	<input type="checkbox" id="spc-player-loop" checked>
-	<div id="spc-player-interface" class="spc-player">
-		<div id="spc-player-header" class="header">
-			<div class="group-left">
-				<label for="spc-player-toggle" class="toggle header-button" title="<?= __('preview.spc.toggle', 'section') ?>"><?= svg('spc_player/shrink') ?><?= svg('spc_player/expand') ?></label>
-				<span>SPC Player</span>
-			</div>
-			<div class="now-playing">
-				<span class="title"></span>
-			</div>
-			<div class="group-right">
-				<a class="stop close header-button" title="<?= __('preview.spc.close', 'section') ?>"><?= svg('spc_player/close') ?></a>
-			</div>
-		</div>
-		<div id="spc-player-content" class="player-content">
-			<div class="track-info">
-				<h2 class="title"><?= __('preview.spc.title', 'section') ?></h2>
-				<h3 class="subtitle"></h3>
-				<div class="details"></div>
-			</div>
-			<div class="seek-container">
-				<span class="track-time-elapsed"></span>
-				<div class="seek"><span class="seek-preview"></span></div>
-				<span class="track-duration"></span>
-			</div>
-			<div id="spc-player-controls" class="controls">
-				<div class="group-left">
-					<a class="play hidden" title="<?= __('preview.spc.resume', 'section') ?>"><?= svg('spc_player/play') ?></a>
-					<a class="pause" title="<?= __('preview.spc.pause', 'section') ?>"><?= svg('spc_player/pause') ?></a>
-					<a id="spc-player-skip" class="hidden" title="<?= __('preview.spc.skip', 'section') ?>"><?= svg('spc_player/skip') ?></a>
-					<a class="restart" title="<?= __('preview.spc.restart', 'section') ?>"><?= svg('spc_player/restart') ?></a>
-					<label for="spc-player-loop" class="loop" title="<?= __('preview.spc.loop', 'section') ?>"><?= svg('spc_player/loop') ?></label>
-				</div>
-				<div id="spc-player-volume" class="volume">
-					<span class="volume-level">100%</span>
-					<?= svg('spc_player/volume') ?>
-					<div class="volume-control">
-						<input type="range" id="volume-slider" title="<?= __('preview.spc.volume', 'section') ?>">
-						<div class="volume-track">
-							<div class="volume-fill"></div>
-							<div class="volume-thumb"></div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div id="track-list-container" class="hidden">
-				<div class="overflow-indicator top"></div>
-				<div class="track-list-scrollbox">
-					<ul class="track-list"></ul>
-				</div>
-				<div class="overflow-indicator bottom"></div>
-			</div>
-			<div id="spc-player-up-next" class="up-next hidden">
-				<span><?= __('preview.spc.up_next', 'section') ?></span><a id="spc-player-up-next-link" title="Opens in a new tab" target="_blank"></a>
-			</div>
-		</div>
-	</div>
+    <input type="checkbox" id="spc-player-toggle" />
+    <input type="checkbox" id="spc-player-loop" checked />
+    <div id="spc-player-interface" class="spc-player">
+        <div id="spc-player-header" class="header">
+            <div class="group-left">
+                <label for="spc-player-toggle" class="toggle header-button" title="Toggle player">
+                    <svg width="24" height="24" viewBox="0 0 24 24" class="shrink">
+                        <path d="m 9,5 3,3 3,-3 z m -4,6 v 2 h 14 v -2 z m 7,5 -3,3 h 6 z" />
+                    </svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" class="expand">
+                        <path d="m 9,7 3,-3 3,3 z m -4,4 v 2 h 14 v -2 z m 7,9 -2.798151,-3 H 15 Z" />
+                    </svg>
+                </label>
+                <span>SPC Player</span>
+            </div>
+            <div class="now-playing">
+                <span class="title"></span>
+            </div>
+            <div class="group-right">
+                <a class="stop close header-button" title="Close">
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                        <path
+                            d="M 7.3847656,5.6152344 5.6152344,7.3847656 10.230469,12 5.6152344,16.615234 7.3847656,18.384766 12,13.769531 16.615234,18.384766 18.384766,16.615234 13.769531,12 18.384766,7.3847656 16.615234,5.6152344 12,10.230469 Z"
+                        />
+                    </svg>
+                </a>
+            </div>
+        </div>
+        <div id="spc-player-content" class="player-content">
+            <div class="track-info">
+                <h2 class="title">Song Title</h2>
+                <h3 class="subtitle"></h3>
+                <div class="details"></div>
+            </div>
+            <div class="seek-container">
+                <span class="track-time-elapsed"></span>
+                <div class="seek"><span class="seek-preview"></span></div>
+                <span class="track-duration"></span>
+            </div>
+            <div id="spc-player-controls" class="controls">
+                <div class="group-left">
+                    <a class="play hidden" title="Resume song">
+                        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M7 5v14l12-7Z" /></svg>
+                    </a>
+                    <a class="pause" title="Pause song">
+                        <svg width="24" height="24" viewBox="0 0 24 24">
+                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                        </svg>
+                    </a>
+                    <a id="spc-player-skip" class="hidden" title="Skip song">
+                        <svg height="24" viewBox="0 0 24 24" width="24">
+                            <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+                        </svg>
+                    </a>
+                    <a class="restart" title="Restart song">
+                        <svg width="24" height="24" viewBox="0 0 24 24">
+                            <path
+                                d="M 12,5 V 1 l -5,5 5,5 V 7 c 3.31,0 6,2.69 6,6 0,3.31 -2.69,6 -6,6 C 8.69,19 6,16.31 6,13 H 4 c 0,4.42 3.58,8 8,8 4.42,0 8,-3.58 8,-8 0,-4.42 -3.58,-8 -8,-8 z"
+                            />
+                        </svg>
+                    </a>
+                    <label for="spc-player-loop" class="loop" title="Toggle looping">
+                        <svg width="24" height="24" viewBox="0 0 24 24">
+                            <path
+                                d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"
+                            />
+                        </svg>
+                    </label>
+                </div>
+                <div id="spc-player-volume" class="volume">
+                    <span class="volume-level">100%</span>
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                        <path
+                            d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+                        />
+                    </svg>
+                    <div class="volume-control">
+                        <input type="range" id="volume-slider" title="Volume" />
+                        <div class="volume-track">
+                            <div class="volume-fill"></div>
+                            <div class="volume-thumb"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="track-list-container" class="hidden">
+                <div class="overflow-indicator top"></div>
+                <div class="track-list-scrollbox">
+                    <ul class="track-list"></ul>
+                </div>
+                <div class="overflow-indicator bottom"></div>
+            </div>
+            <div id="spc-player-up-next" class="up-next hidden">
+                <span>Up Next: </span><a id="spc-player-up-next-link" title="Opens in a new tab" target="_blank"></a>
+            </div>
+        </div>
+    </div>
 </div>
