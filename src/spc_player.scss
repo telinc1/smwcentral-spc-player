@@ -1,566 +1,564 @@
 :root {
-	// player UI colors
-	--player_bg: rgba(18, 19, 20, 0.9);
-	--player_text: #fff;
-	--player_borders: color-mix(in srgb, var(--player_text), transparent 85%);
+    // player UI colors
+    --player_bg: rgba(18, 19, 20, 0.9);
+    --player_text: #fff;
+    --player_borders: color-mix(in srgb, var(--player_text), transparent 85%);
 
-	// used by interface.js
-	--seek_fill: #16bc10;
-	--seek_bar: color-mix(in srgb, var(--player_text), transparent 85%);
+    // used by interface.js
+    --seek_fill: #16bc10;
+    --seek_bar: color-mix(in srgb, var(--player_text), transparent 85%);
 
-	// volume bar colors
-	--volume_fill: #338fdf;
-	--volume_overfill: #dfc033;
-	--volume_bar: color-mix(in srgb, var(--player_text), transparent 85%);
+    // volume bar colors
+    --volume_fill: #338fdf;
+    --volume_overfill: #dfc033;
+    --volume_bar: color-mix(in srgb, var(--player_text), transparent 85%);
 
-	// button colors
-	--button_fill: color-mix(in srgb, var(--player_text), transparent 85%);
-	--button_hover_fill: color-mix(in srgb, var(--player_text), transparent 75%);
-	--button_active_fill: color-mix(in srgb, var(--player_text), transparent 75%);
+    // button colors
+    --button_fill: color-mix(in srgb, var(--player_text), transparent 85%);
+    --button_hover_fill: color-mix(in srgb, var(--player_text), transparent 75%);
+    --button_active_fill: color-mix(in srgb, var(--player_text), transparent 75%);
 
-	--button_checked_fill: #75d1ff;
+    --button_checked_fill: #75d1ff;
 
-	// list colors
-	--list_item_fill: color-mix(in srgb, var(--player_text), transparent 95%);
-	--list_item_hover_fill: color-mix(in srgb, var(--player_text), transparent 88%);
-	--list_item_active_fill: color-mix(in srgb, var(--player_text), transparent 83%);
+    // list colors
+    --list_item_fill: color-mix(in srgb, var(--player_text), transparent 95%);
+    --list_item_hover_fill: color-mix(in srgb, var(--player_text), transparent 88%);
+    --list_item_active_fill: color-mix(in srgb, var(--player_text), transparent 83%);
 }
 
 @mixin player-toggled() {
-	[id="spc-player-toggle"]:checked ~ & {
-		@content;
-	}
+    [id="spc-player-toggle"]:checked ~ & {
+        @content;
+    }
 }
 
 @mixin mobile-small() {
-	@media screen and (max-width: 480px) {
-		@content;
-	}
+    @media screen and (max-width: 480px) {
+        @content;
+    }
 }
 
 @keyframes marquee {
-	0% {
-		transform: translateX(0);
-	}
-	100% {
-		transform: translateX(-100%);
-	}
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
 }
 
 body {
-	&.fetching-song {
-		cursor: progress;
+    &.fetching-song {
+        cursor: progress;
 
-		a[data-spc-file],
-		#spc-player-interface .controls a.restart,
-		#spc-player-interface .controls a.stop,
-		#spc-player-interface .controls a.skip,
-		#spc-player-interface li {
-			cursor: wait;
-		}
-	}
+        a[data-spc-file],
+        #spc-player-interface .controls a.restart,
+        #spc-player-interface .controls a.stop,
+        #spc-player-interface .controls a.skip,
+        #spc-player-interface li {
+            cursor: wait;
+        }
+    }
 
-	&.has-script .no-script,
-	&:not(.has-script) .script-only {
-		display: none;
-	}
+    &.has-script .no-script,
+    &:not(.has-script) .script-only {
+        display: none;
+    }
 }
 
 #spc-player-toggle,
 #spc-player-loop {
-	display: none;
+    display: none;
 }
 
 #spc-player-interface {
-	width: 400px;
-	height: auto;
-	position: fixed;
-	right: 16px;
-	bottom: 16px;
-	z-index: 10000;
-	background: var(--player_bg);
-	backdrop-filter: blur(7px);
-	border-radius: 12px;
-	box-shadow:
-		0 0px 0px 3px rgba(white, 0.1),
-		0 2px 4px 4px rgba(black, 0.2),
-		0 2px 6px 4px rgba(black, 0.04);
-	transition: all 220ms;
-	overflow: hidden;
-
-	will-change: transform;
-	transform: translate3d(0, 0, 0);
-
-	@include mobile-small {
-		left: auto;
-		right: 6px;
-		bottom: 6px;
-		width: calc(100% - 12px);
-	}
-
-	// anchor player differently on large displays
-	@media screen and (min-width: 2560px) {
-		bottom: 24px;
-		right: auto;
-		top: auto;
-		left: calc(50% + (880px - 400px));
-	}
-
-	&:not(.shown) {
-		display: none;
-	}
-
-	svg {
-		fill: var(--player_text);
-	}
-
-	* {
-		color: var(--player_text);
-	}
-	// header
-	.header {
-		display: flex;
-		justify-content: space-between;
-		gap: 8px;
-		padding: 6px;
-		border-bottom: 1px solid var(--player_borders);
-		cursor: move;
-		user-select: none;
-
-		@include mobile-small {
-			cursor: default;
-		}
-
-		& > div {
-			display: flex;
-			gap: 6px;
-		}
-
-		span {
-			font-weight: bold;
-			height: 24px;
-			line-height: 24px;
-		}
-
-		a,
-		label {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			box-sizing: border-box;
-			width: 24px;
-			height: 24px;
-			border-radius: 6px;
-			cursor: pointer;
-
-			&:hover {
-				background-color: var(--button_hover_fill);
-			}
-
-			&.toggle > svg {
-				transition: display ease 100ms;
-
-				&.expand {
-					display: none;
-				}
-				&.shrink {
-					display: inline;
-				}
-
-				@include player-toggled {
-					&.expand {
-						display: inline;
-					}
-					&.shrink {
-						display: none;
-					}
-				}
-			}
-		}
-
-		// now playing
-		.now-playing {
-			overflow: hidden;
-			white-space: nowrap;
-			box-sizing: border-box;
-			flex: 1;
-			user-select: none;
-
-			.title {
-				display: none;
-				padding-left: 100%;
-				animation: marquee 10s linear infinite;
-				font-size: 13px !important;
-
-				@include player-toggled {
-					display: inline-block;
-				}
-			}
-		}
-	}
-
-	// player window content
-	.player-content {
-		display: flex;
-		padding: 8px;
-		flex-direction: column;
-		gap: 8px;
-
-		@include player-toggled {
-			padding: 4px;
-		}
-	}
-
-	// player controls
-	.controls {
-		display: flex;
-		justify-content: space-between;
-		padding-top: 8px;
-		border-top: 1px solid var(--player_borders);
-
-		@include player-toggled {
-			display: none;
-		}
-
-		& > div {
-			display: flex;
-			gap: 6px;
-		}
-
-		a,
-		label {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			box-sizing: border-box;
-			width: 30px;
-			height: 30px;
-			border-radius: 6px;
-			cursor: pointer;
-			background-color: var(--button_fill);
-
-			&:hover {
-				background-color: var(--button_hover_fill);
-			}
-
-			&.loop {
-				svg {
-					transition: transform 0.3s ease;
-				}
-
-				&:active svg {
-					transform: rotate(-90deg);
-				}
-
-				[id="spc-player-loop"]:checked ~ & {
-					background-color: color-mix(in srgb, var(--button_checked_fill), transparent 70%);
-					&:hover {
-						background-color: color-mix(in srgb, var(--button_checked_fill), transparent 60%);
-					}
-
-					& > svg {
-						transform: rotate(-90deg);
-						fill: color-mix(in srgb, var(--button_checked_fill), var(--player_text) 50%);
-					}
-				}
-			}
-		}
-	}
-
-	// track info
-	.track-info {
-		display: flex;
-		flex-direction: column;
-		padding: 0 3px;
-		gap: 4px;
-
-		.title,
-		.subtitle {
-			overflow: hidden;
-			white-space: nowrap;
-			text-overflow: ellipsis;
-			color: inherit;
-		}
-
-		.title {
-			font-size: 1.25em;
-			font-weight: 700;
-			transition: all 220ms;
-		}
-
-		.subtitle {
-			font-size: 1.09em;
-			font-weight: 400;
-			opacity: 0.8;
-		}
-
-		.details {
-			font-size: 0.93em;
-			line-height: 1em;
-			opacity: 0.5;
-		}
-
-		@include player-toggled {
-			display: none;
-		}
-
-		@include mobile-small {
-			gap: 2px;
-
-			.title {
-				font-size: 1.07em;
-			}
-
-			.artist {
-				font-size: 0.93em;
-			}
-
-			.details {
-				font-size: smaller;
-			}
-		}
-	}
-
-	.seek-container {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: 8px;
-
-		span {
-			user-select: none;
-
-			&.track-time-elapsed,
-			&.track-duration {
-				min-width: 30px;
-				font-variant-numeric: tabular-nums;
-				@include mobile-small {
-					font-size: 13px;
-				}
-			}
-
-			&.track-time-elapsed {
-				text-align: right;
-			}
-			&.track-duration {
-				text-align: left;
-			}
-		}
-
-		@include player-toggled {
-			font-size: smaller;
-		}
-
-		// seek bar
-		.seek {
-			position: relative;
-			height: 10px;
-			border-radius: 5px;
-			flex: 1;
-			cursor: pointer;
-			background-color: var(--seek_bar);
-
-			@include player-toggled {
-				height: 8px;
-			}
-
-			> span {
-				display: none;
-				position: absolute;
-				bottom: 75%;
-				padding: 0 4px;
-				border-radius: 3px;
-				background: rgba(0, 0, 0, 0.97);
-				pointer-events: none;
-			}
-
-			&:hover > span {
-				display: block;
-			}
-
-			@include mobile-small {
-				height: 8px;
-			}
-		}
-	}
-
-	// track list container
-	$playlist_item_height: 32px;
-
-	#track-list-container {
-		position: relative;
-
-		@include player-toggled {
-			display: none !important;
-		}
-
-		// scroll box for the track list
-		.track-list-scrollbox {
-			max-height: calc($playlist_item_height * 6);
-			overflow-y: auto;
-
-			@include mobile-small {
-				max-height: calc($playlist_item_height * 4);
-			}
-
-			// track list
-			ul.track-list {
-				margin: 0;
-				padding: 0;
-				color: inherit;
-				list-style-type: none;
-				counter-reset: spcs;
-				display: flex;
-				flex-direction: column;
-				gap: 4px;
-
-				li {
-					height: $playlist_item_height;
-					line-height: $playlist_item_height;
-					border-radius: 6px;
-					padding: 0 8px;
-					overflow: hidden;
-					white-space: nowrap;
-					text-overflow: ellipsis;
-					counter-increment: spcs;
-					transition: background-color 220ms;
-					background-color: var(--list_item_fill);
-					cursor: pointer;
-
-					&:before {
-						content: counter(spcs) ".";
-						padding-right: 6px;
-					}
-
-					&:hover {
-						background-color: var(--list_item_hover_fill);
-					}
-
-					&.playing {
-						pointer-events: none;
-						font-weight: bold;
-						cursor: default;
-						background-color: var(--list_item_active_fill);
-
-						// draw a play triangle without emoji rendering
-						&::before {
-							content: "▶⠀" counter(spcs) ".";
-							font-family: sans-serif;
-							font-variant-emoji: text;
-						}
-					}
-
-					@include mobile-small {
-						font-size: 13px;
-					}
-				}
-			}
-		}
-
-		// overflow indicators
-		.overflow-indicator {
-			position: absolute;
-			height: 16px;
-
-			left: 0;
-			right: 0;
-			pointer-events: none;
-
-			opacity: 0;
-			transition: opacity 0.1s ease;
-
-			&.top {
-				top: 0;
-				background: linear-gradient(to bottom, var(--player_bg) 0%, transparent 60%);
-			}
-			&.bottom {
-				bottom: 0;
-				background: linear-gradient(to top, var(--player_bg) 0%, transparent 60%);
-			}
-			&.visible {
-				opacity: 1;
-			}
-		}
-	}
-
-	// volume control
-	.volume {
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
-		gap: 6px !important;
-
-		.volume-level {
-			color: inherit;
-			user-select: none;
-			font-weight: bold;
-			text-align: left;
-		}
-
-		// defines for volume control widget
-		$volume_slider_width: 96px;
-		$volume_slider_height: 6px;
-		$volume_handle_size: 20px;
-
-		.volume-control {
-			position: relative;
-			width: $volume_slider_width;
-			height: $volume_slider_height;
-
-			input[type="range"] {
-				position: absolute;
-				width: 100%;
-				height: $volume_handle_size;
-				// some wacky math to position the input behind the widget
-				top: calc(($volume_handle_size - $volume_slider_height) * 0.5 * -1);
-				opacity: 0; // invisible
-				z-index: 2;
-				cursor: pointer;
-			}
-
-			.volume-track,
-			.volume-fill {
-				position: absolute;
-				top: 0;
-				left: 0;
-				height: 100%;
-				width: 100%;
-				border-radius: 8px;
-			}
-
-			.volume-track {
-				background: var(--volume_bar);
-
-				.volume-fill {
-					background: linear-gradient(
-						to right,
-						var(--volume_fill) 0%,
-						var(--volume_fill) 66%,
-						var(--volume_overfill) 66%,
-						var(--volume_overfill) 100%
-					);
-					clip-path: inset(0 100% 0 0);
-					transition: clip-path 0.2s ease;
-				}
-
-				.volume-thumb {
-					position: absolute;
-					top: 50%;
-					left: 0%;
-					transform: translate(-50%, -50%);
-					width: $volume_handle_size;
-					height: $volume_handle_size;
-					background: var(--player_text);
-					border-radius: 50%;
-					transition: left 0.2s ease;
-					pointer-events: none;
-				}
-			}
-		}
-	}
-
-	// hidden elements
-	.hidden {
-		display: none !important;
-	}
+    width: 400px;
+    height: auto;
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 10000;
+    background: var(--player_bg);
+    backdrop-filter: blur(7px);
+    border-radius: 12px;
+    box-shadow: 0 0px 0px 3px rgba(white, 0.1), 0 2px 4px 4px rgba(black, 0.2), 0 2px 6px 4px rgba(black, 0.04);
+    transition: all 220ms;
+    overflow: hidden;
+
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+
+    @include mobile-small {
+        left: auto;
+        right: 6px;
+        bottom: 6px;
+        width: calc(100% - 12px);
+    }
+
+    // anchor player differently on large displays
+    @media screen and (min-width: 2560px) {
+        bottom: 24px;
+        right: auto;
+        top: auto;
+        left: calc(50% + (880px - 400px));
+    }
+
+    &:not(.shown) {
+        display: none;
+    }
+
+    svg {
+        fill: var(--player_text);
+    }
+
+    * {
+        color: var(--player_text);
+    }
+    // header
+    .header {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 6px;
+        border-bottom: 1px solid var(--player_borders);
+        cursor: move;
+        user-select: none;
+
+        @include mobile-small {
+            cursor: default;
+        }
+
+        & > div {
+            display: flex;
+            gap: 6px;
+        }
+
+        span {
+            font-weight: bold;
+            height: 24px;
+            line-height: 24px;
+        }
+
+        a,
+        label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: var(--button_hover_fill);
+            }
+
+            &.toggle > svg {
+                transition: display ease 100ms;
+
+                &.expand {
+                    display: none;
+                }
+                &.shrink {
+                    display: inline;
+                }
+
+                @include player-toggled {
+                    &.expand {
+                        display: inline;
+                    }
+                    &.shrink {
+                        display: none;
+                    }
+                }
+            }
+        }
+
+        // now playing
+        .now-playing {
+            overflow: hidden;
+            white-space: nowrap;
+            box-sizing: border-box;
+            flex: 1;
+            user-select: none;
+
+            .title {
+                display: none;
+                padding-left: 100%;
+                animation: marquee 10s linear infinite;
+                font-size: 13px !important;
+
+                @include player-toggled {
+                    display: inline-block;
+                }
+            }
+        }
+    }
+
+    // player window content
+    .player-content {
+        display: flex;
+        padding: 8px;
+        flex-direction: column;
+        gap: 8px;
+
+        @include player-toggled {
+            padding: 4px;
+        }
+    }
+
+    // player controls
+    .controls {
+        display: flex;
+        justify-content: space-between;
+        padding-top: 8px;
+        border-top: 1px solid var(--player_borders);
+
+        @include player-toggled {
+            display: none;
+        }
+
+        & > div {
+            display: flex;
+            gap: 6px;
+        }
+
+        a,
+        label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            background-color: var(--button_fill);
+
+            &:hover {
+                background-color: var(--button_hover_fill);
+            }
+
+            &.loop {
+                svg {
+                    transition: transform 0.3s ease;
+                }
+
+                &:active svg {
+                    transform: rotate(-90deg);
+                }
+
+                [id="spc-player-loop"]:checked ~ & {
+                    background-color: color-mix(in srgb, var(--button_checked_fill), transparent 70%);
+                    &:hover {
+                        background-color: color-mix(in srgb, var(--button_checked_fill), transparent 60%);
+                    }
+
+                    & > svg {
+                        transform: rotate(-90deg);
+                        fill: color-mix(in srgb, var(--button_checked_fill), var(--player_text) 50%);
+                    }
+                }
+            }
+        }
+    }
+
+    // track info
+    .track-info {
+        display: flex;
+        flex-direction: column;
+        padding: 0 3px;
+        gap: 4px;
+
+        .title,
+        .subtitle {
+            margin: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            color: inherit;
+        }
+
+        .title {
+            font-size: 1.25em;
+            font-weight: 700;
+            transition: all 220ms;
+        }
+
+        .subtitle {
+            font-size: 1.09em;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+
+        .details {
+            font-size: 0.93em;
+            line-height: 1em;
+            opacity: 0.5;
+        }
+
+        @include player-toggled {
+            display: none;
+        }
+
+        @include mobile-small {
+            gap: 2px;
+
+            .title {
+                font-size: 1.07em;
+            }
+
+            .artist {
+                font-size: 0.93em;
+            }
+
+            .details {
+                font-size: smaller;
+            }
+        }
+    }
+
+    .seek-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+
+        span {
+            user-select: none;
+
+            &.track-time-elapsed,
+            &.track-duration {
+                min-width: 30px;
+                font-variant-numeric: tabular-nums;
+                @include mobile-small {
+                    font-size: 13px;
+                }
+            }
+
+            &.track-time-elapsed {
+                text-align: right;
+            }
+            &.track-duration {
+                text-align: left;
+            }
+        }
+
+        @include player-toggled {
+            font-size: smaller;
+        }
+
+        // seek bar
+        .seek {
+            position: relative;
+            height: 10px;
+            border-radius: 5px;
+            flex: 1;
+            cursor: pointer;
+            background-color: var(--seek_bar);
+
+            @include player-toggled {
+                height: 8px;
+            }
+
+            > span {
+                display: none;
+                position: absolute;
+                bottom: 75%;
+                padding: 0 4px;
+                border-radius: 3px;
+                background: rgba(0, 0, 0, 0.97);
+                pointer-events: none;
+            }
+
+            &:hover > span {
+                display: block;
+            }
+
+            @include mobile-small {
+                height: 8px;
+            }
+        }
+    }
+
+    // track list container
+    $playlist_item_height: 32px;
+
+    #track-list-container {
+        position: relative;
+
+        @include player-toggled {
+            display: none !important;
+        }
+
+        // scroll box for the track list
+        .track-list-scrollbox {
+            max-height: calc($playlist_item_height * 6);
+            overflow-y: auto;
+
+            @include mobile-small {
+                max-height: calc($playlist_item_height * 4);
+            }
+
+            // track list
+            ul.track-list {
+                margin: 0;
+                padding: 0;
+                color: inherit;
+                list-style-type: none;
+                counter-reset: spcs;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+
+                li {
+                    height: $playlist_item_height;
+                    line-height: $playlist_item_height;
+                    border-radius: 6px;
+                    padding: 0 8px;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    counter-increment: spcs;
+                    transition: background-color 220ms;
+                    background-color: var(--list_item_fill);
+                    cursor: pointer;
+
+                    &:before {
+                        content: counter(spcs) ".";
+                        padding-right: 6px;
+                    }
+
+                    &:hover {
+                        background-color: var(--list_item_hover_fill);
+                    }
+
+                    &.playing {
+                        pointer-events: none;
+                        font-weight: bold;
+                        cursor: default;
+                        background-color: var(--list_item_active_fill);
+
+                        // draw a play triangle without emoji rendering
+                        &::before {
+                            content: "▶⠀" counter(spcs) ".";
+                            font-family: sans-serif;
+                            font-variant-emoji: text;
+                        }
+                    }
+
+                    @include mobile-small {
+                        font-size: 13px;
+                    }
+                }
+            }
+        }
+
+        // overflow indicators
+        .overflow-indicator {
+            position: absolute;
+            height: 16px;
+
+            left: 0;
+            right: 0;
+            pointer-events: none;
+
+            opacity: 0;
+            transition: opacity 0.1s ease;
+
+            &.top {
+                top: 0;
+                background: linear-gradient(to bottom, var(--player_bg) 0%, transparent 60%);
+            }
+            &.bottom {
+                bottom: 0;
+                background: linear-gradient(to top, var(--player_bg) 0%, transparent 60%);
+            }
+            &.visible {
+                opacity: 1;
+            }
+        }
+    }
+
+    // volume control
+    .volume {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px !important;
+
+        .volume-level {
+            color: inherit;
+            user-select: none;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        // defines for volume control widget
+        $volume_slider_width: 96px;
+        $volume_slider_height: 6px;
+        $volume_handle_size: 20px;
+
+        .volume-control {
+            position: relative;
+            width: $volume_slider_width;
+            height: $volume_slider_height;
+
+            input[type="range"] {
+                position: absolute;
+                width: 100%;
+                height: $volume_handle_size;
+                // some wacky math to position the input behind the widget
+                top: calc(($volume_handle_size - $volume_slider_height) * 0.5 * -1);
+                opacity: 0; // invisible
+                z-index: 2;
+                cursor: pointer;
+            }
+
+            .volume-track,
+            .volume-fill {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 100%;
+                border-radius: 8px;
+            }
+
+            .volume-track {
+                background: var(--volume_bar);
+
+                .volume-fill {
+                    background: linear-gradient(
+                        to right,
+                        var(--volume_fill) 0%,
+                        var(--volume_fill) 66%,
+                        var(--volume_overfill) 66%,
+                        var(--volume_overfill) 100%
+                    );
+                    clip-path: inset(0 100% 0 0);
+                    transition: clip-path 0.2s ease;
+                }
+
+                .volume-thumb {
+                    position: absolute;
+                    top: 50%;
+                    left: 0%;
+                    transform: translate(-50%, -50%);
+                    width: $volume_handle_size;
+                    height: $volume_handle_size;
+                    background: var(--player_text);
+                    border-radius: 50%;
+                    transition: left 0.2s ease;
+                    pointer-events: none;
+                }
+            }
+        }
+    }
+
+    // hidden elements
+    .hidden {
+        display: none !important;
+    }
 }
