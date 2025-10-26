@@ -19,8 +19,8 @@ The online SNES SPC700 player used by [SMW Central](https://www.smwcentral.net).
 Load the stylesheet and the SPC player script:
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/@smwcentral/spc-player@2.0.0/dist/spc_player.css">
-<script src="https://unpkg.com/@smwcentral/spc-player@2.0.0/dist/spc.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@smwcentral/spc-player@2.0.1/dist/spc_player.css">
+<script src="https://unpkg.com/@smwcentral/spc-player@2.0.1/dist/spc.js"></script>
 ```
 
 You must also include the HTML from [spc_player.html](https://github.com/telinc1/smwcentral-spc-player/blob/master/src/spc_player.html) somewhere on the page.
