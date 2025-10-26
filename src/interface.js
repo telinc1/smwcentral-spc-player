@@ -251,6 +251,8 @@
 
 			currentSong = song;
 
+			drag?.keepInViewport();
+
 			player.classList.add("shown");
 			document.body.classList.remove("fetching-song");
 		};
@@ -454,7 +456,16 @@
 		setInterval(updateTimer, 500);
 		requestAnimationFrame(updateUI);
 
+		// drag
 		drag = dragSPCPlayer(player, header);
+
+		const closeBtn = player.querySelector(".close");
+
+		closeBtn.addEventListener("click", () => {
+			drag?.resetPosition();
+		});
+
+		// track list overflow
 		trackListOverflow();
 
 		SMWCentral.SPCPlayer.parseSPC = parseSPC;
@@ -578,11 +589,6 @@
 
 	const player = document.getElementById("spc-player-interface");
 	const header = player.querySelector("#spc-player-header");
-	const closeBtn = player.querySelector(".close");
-
-	closeBtn.addEventListener("click", () => {
-		drag?.resetPosition();
-	});
 
 	// display an overflow indicator for long track lists
 	function trackListOverflow() {
