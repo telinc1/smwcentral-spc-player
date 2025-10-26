@@ -198,6 +198,7 @@
 			// display duration
 			if (song.duration > 0) {
 				timer.target = song.duration;
+				timer.fade = song.fade;
 
 				const seconds = song.duration % 60;
 				playerUI.trackDuration.innerText = `${Math.floor(song.duration / 60)}:${
@@ -277,11 +278,13 @@
 				return;
 			}
 
-			if (time > 1 && time % timer.target <= 1 && !loop.checked) {
+			if (time > 1 && timer.target - (time % timer.target) <= 1 && !loop.checked && timer.finish === 0) {
 				timer.finish = time + timer.fade / 1000;
 
-				SPCPlayer.setVolume(SPCPlayer.getVolume());
+				// setVolume() with a duration will cancel value changes, so
+				// schedule the future fadeout first, then reset the volume
 				SPCPlayer.setVolume(0, timer.fade / 1000);
+				SPCPlayer.setVolume(SPCPlayer.getVolume());
 			}
 		};
 
