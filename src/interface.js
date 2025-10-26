@@ -204,8 +204,12 @@
 				playerUI.trackDuration.innerText = `${Math.floor(song.duration / 60)}:${
 					seconds > 9 ? "" : "0"
 				}${seconds}`;
+				playerUI.seekContainer.style.display = "";
 			} else {
 				timer.target = 0;
+
+				playerUI.trackDuration.innerText = "?:??";
+				playerUI.seekContainer.style.display = "none";
 			}
 
 			// display time elapsed
