@@ -136,6 +136,11 @@
 					);
 				}
 			},
+			fadeOut(duration) {
+				this.gainNode.gain.cancelScheduledValues(this.context.currentTime);
+				this.gainNode.gain.setValueAtTime(this.getVolume(), this.context.currentTime);
+				this.gainNode.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + duration);
+			},
 			getSample(channel, index) {
 				const offset = this.rateRatio * index;
 				const bufferOffset = Math.floor(offset);

@@ -284,11 +284,7 @@
 
 			if (time > 1 && timer.target - (time % timer.target) <= 1 && !loop.checked && timer.finish === 0) {
 				timer.finish = time + timer.fade / 1000;
-
-				// setVolume() with a duration will cancel value changes, so
-				// schedule the future fadeout first, then reset the volume
-				SPCPlayer.setVolume(0, timer.fade / 1000);
-				SPCPlayer.setVolume(SPCPlayer.getVolume());
+				SPCPlayer.fadeOut(timer.fade / 1000);
 			}
 		};
 
