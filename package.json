@@ -1,29 +1,29 @@
 {
-  "name": "@smwcentral/spc-player",
-  "version": "2.0.1",
-  "description": "SMW Central's SPC player",
-  "main": "dist/spc.js",
-  "files": [
-    "dist/"
-  ],
-  "scripts": {
-    "build": "./make.sh",
-    "build-dev": "./make.sh --dev"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/telinc1/smwcentral-spc-player.git"
-  },
-  "author": "Telinc1",
-  "license": "LGPL-2.1-only",
-  "bugs": {
-    "url": "https://github.com/telinc1/smwcentral-spc-player/issues"
-  },
-  "homepage": "https://github.com/telinc1/smwcentral-spc-player#readme",
-  "devDependencies": {
-    "@babel/cli": "^7.18.10",
-    "@babel/core": "^7.18.10",
-    "@babel/preset-env": "^7.18.10",
-    "sass": "^1.54.3"
-  }
+	"name": "@smwcentral/spc-player",
+	"version": "2.0.2",
+	"description": "SMW Central's SPC player",
+	"main": "dist/spc.js",
+	"files": [
+		"dist/"
+	],
+	"scripts": {
+		"build": "./make.sh",
+		"build-dev": "./make.sh --dev"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/telinc1/smwcentral-spc-player.git"
+	},
+	"author": "Telinc1",
+	"license": "LGPL-2.1-only",
+	"bugs": {
+		"url": "https://github.com/telinc1/smwcentral-spc-player/issues"
+	},
+	"homepage": "https://github.com/telinc1/smwcentral-spc-player#readme",
+	"devDependencies": {
+		"@babel/cli": "^7.18.10",
+		"@babel/core": "^7.18.10",
+		"@babel/preset-env": "^7.18.10",
+		"sass": "^1.54.3"
+	}
 }
